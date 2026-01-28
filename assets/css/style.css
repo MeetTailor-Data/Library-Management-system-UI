@@ -1,0 +1,619 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.navbar a.active,
+.navbar a:hover {
+  color: #ff5722;
+}
+
+.logo img {
+  height: 50px;          /* control navbar height */
+  width: auto;
+}
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+.btn-primary {
+  background: #ff5722;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: #007bff;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* =====================================================
+   HERO
+===================================================== */
+.home-hero {
+  height: 100vh;
+  background: url("../images/the_library_1.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  text-align: center;
+  color: #fff;
+  border-radius: 10px;
+}
+
+.hero-content h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+/* =====================================================
+   ABOUT
+===================================================== */
+.home-about {
+  padding: 80px 0;
+  background: #fff;
+  text-align: center;
+}
+
+/* =====================================================
+   SERVICES
+===================================================== */
+.home-services {
+  padding: 80px 0;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.service-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+.service-card img {
+  width: 100%;
+  height: 180px;          /* controls size */
+  object-fit: cover;     /* prevents stretching */
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* =====================================================
+   CATALOG
+===================================================== */
+.home-catalog {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.catalog-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.catalog-card img {
+  width: 100%;
+  max-height: 220px;     /* book size limit */
+  object-fit: contain;  /* keeps book shape */
+  margin-bottom: 15px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+.main-footer {
+  background: #333;
+  color: #fff;
+  padding: 40px 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.footer-grid a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* =====================================================
+   ABOUT US PAGE
+===================================================== */
+
+.about-hero {
+  height: 60vh;
+  background: linear-gradient(
+      rgba(0,0,0,0.6),
+      rgba(0,0,0,0.6)
+    ),
+    url("../images/the_library_1.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-hero-content {
+  color: #fff;
+  text-align: center;
+}
+
+.about-hero-content h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.about-intro {
+  padding: 80px 0;
+  background: #fff;
+  text-align: center;
+}
+
+.about-intro p {
+  max-width: 800px;
+  margin: 15px auto;
+  line-height: 1.7;
+}
+
+.about-mission {
+  padding: 80px 0;
+  background: #f4f4f4;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.mission-box,
+.values-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.values-box ul {
+  padding-left: 20px;
+}
+
+.values-box li {
+  margin-bottom: 10px;
+}
+
+/* =====================================================
+   SERVICES PAGE
+===================================================== */
+
+.services-hero {
+  height: 55vh;
+  background: linear-gradient(
+      rgba(0,0,0,0.6),
+      rgba(0,0,0,0.6)
+    ),
+    url("../images/the_library_1.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.services-hero-content {
+  color: #fff;
+  text-align: center;
+}
+
+.services-hero-content h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.services-intro {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.services-list {
+  padding: 80px 0;
+  background: #f4f4f4;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.service-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+}
+
+.services-projects {
+  padding: 80px 0;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.project-card {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.services-faq {
+  padding: 80px 0;
+  background: #f4f4f4;
+}
+
+.faq-item {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+
+/* ================= CATALOG FIX ================= */
+
+/* Book grid */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 30px;
+  padding: 50px 0;
+  align-items: stretch;
+}
+
+/* Book card */
+.book-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-6px);
+}
+
+/* FIX IMAGE SIZE */
+.book-card img {
+  width: 100%;
+  height: 200px;              /* 🔑 FIXED HEIGHT */
+  object-fit: cover;          /* 🔑 CROPS PROPERLY */
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/* Text */
+.book-card h3 {
+  font-size: 18px;
+  margin: 8px 0 4px;
+}
+
+.book-card .author {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.book-card .desc {
+  font-size: 14px;
+  color: #666;
+  margin: 8px 0;
+  flex-grow: 1;
+}
+
+/* Button */
+.book-card button {
+  padding: 10px;
+  border: none;
+  background: #2c3e50;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book-card button:hover {
+  background: #1a252f;
+}
+
+.book-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  padding: 40px;
+}
+
+.book {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.book img {
+  width: 100%;
+  height: 245px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.book h3 {
+  font-size: 18px;
+  margin: 6px 0;
+}
+
+.book p {
+  font-size: 14px;
+  color: #555;
+}
+
+.book button {
+  margin-top: auto;
+  padding: 10px;
+  border: none;
+  background: #2c3e50;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book button:hover {
+  background: #1a252f;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-container {
+  max-width: 600px;
+  margin: 70px auto;
+  display: flex;
+  gap: 10px;
+}
+
+#search-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+}
+
+#search-button {
+  padding: 10px 16px;
+  border: none;
+  background: #2c3e50;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+
+/* =====================================================
+   CONTACT PAGE
+===================================================== */
+
+.contact-section {
+  padding: 60px 20px;
+}
+
+.contact-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.contact-info h2,
+.contact-form h2 {
+  margin-bottom: 15px;
+}
+
+.contact-info p {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.contact-form button {
+  padding: 10px 20px;
+  background: #ff5722;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/* ===============================
+   PAGE OFFSET (FIX FIXED HEADER)
+================================ */
+.page-content {
+  margin-top: 90px;
+}
+
+/* ===============================
+   CONTACT PAGE LAYOUT
+================================ */
+.contact-section {
+  padding: 60px 20px;
+  background: #f4f4f4;
+}
+
+.contact-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* INFO */
+.contact-info h2 {
+  margin-bottom: 15px;
+}
+
+.contact-info p {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+/* FORM */
+.contact-form h2 {
+  margin-bottom: 15px;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.contact-form button {
+  padding: 12px;
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.contact-form button:hover {
+  background: #e64a19;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management | Login & Signup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff9a00, #ffd000);
+    }
+
+    .container {
+      width: 380px;
+      background: #fff;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .tabs button {
+      width: 50%;
+      padding: 10px;
+      border: none;
+      background: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: #555;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tabs button.active {
+      color: #c33764;
+      border-bottom: 2px solid #c33764;
+    }
+
+    form {
+      display: none;
+    }
+
+    form.active {
+      display: block;
+    }
+
+    .input-box {
+      margin-bottom: 15px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .input-box input:focus {
+      border-color: #c33764;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff9a00, #ff6a00);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .guest {
+      background: #fff;
+      color: #ff6a00;
+      border: 2px solid #ff6a00;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Library Management System</h2>
+
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+      <button id="signupTab" onclick="showSignup()">Signup</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="active">
+      <div class="input-box">
+        <input type="text" placeholder="Student ID / Admin ID" required />
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password" required />
+      </div>
+      <button class="btn">Login</button>
+      <button class="btn guest" onclick="goHome()" type="button">Continue as Guest</button>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm">
+      <div class="input-box">
+        <input type="text" placeholder="Full Name" required />
+      </div>
+      <div class="input-box">
+        <input type="text" placeholder="Student ID" required />
+      </div>
+      <div class="input-box">
+        <input type="email" placeholder="Email" required />
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password" required />
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Confirm Password" required />
+      </div>
+      <button class="btn">Create Account</button>
+    </form>
+
+    <div class="footer-text">© 2026 Library Management System</div>
+  </div>
+
+  <script>
+    function showLogin() {
+      document.getElementById('loginForm').classList.add('active');
+      document.getElementById('signupForm').classList.remove('active');
+      document.getElementById('loginTab').classList.add('active');
+      document.getElementById('signupTab').classList.remove('active');
+    }
+
+    function showSignup() {
+      document.getElementById('signupForm').classList.add('active');
+      document.getElementById('loginForm').classList.remove('active');
+      document.getElementById('signupTab').classList.add('active');
+      document.getElementById('loginTab').classList.remove('active');
+    }
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
