@@ -37,7 +37,6 @@ Library-Management-System-UI/
 ├── assets/
 │   ├── css/
 │   │   ├── style.css
-│   │   └── style2.css
 │   ├── images/
 │   │   ├── logo.png
 |   |  (PUT YOUR IMAGES)
