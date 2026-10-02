@@ -69,13 +69,19 @@ Library-Management-System/
 │
 └── assets/
     ├── css/
-    │   ├── style.css           # Global Theme, Layout & Mobile Media Queries
-    │   └── style2.css          # Supplementary Styles
+    │   └── style.css           # Global Theme, Layout & Mobile Media Queries
     ├── js/
-    │   ├── auth-session.js     # Session Management & Dynamic Navbar
+    │   ├── slms-store.js       # Centralized Reactive State Engine & Real-Time Sync
+    │   ├── auth-session.js     # Session Management, RBAC Navbar & Hamburger Controller
     │   └── main-animations.js  # Scroll Reveal, Counter & Accordion Animations
     └── images/                 # Book Covers, Logos & Media Assets
 ```
+
+---
+
+## 🌐 Live Deployment
+
+* **Production URL:** [https://smartlib-mgmt.vercel.app/](https://smartlib-mgmt.vercel.app/)
 
 ---
 
@@ -83,9 +89,10 @@ Library-Management-System/
 
 | Role | User / Student ID | Password | Access / Permissions |
 |---|---|---|---|
-| **Librarian (Admin)** | `ADMIN01` *(or `admin`)* | `admin123` | Full Inventory CRUD, Issue & Return, Student List, Inquiries |
-| **Demo Student 1** | `STU101` | `student123` | Borrow Books, Active Due Date Tracking, History |
-| **Demo Student 2** | `STU102` | `student123` | Overdue Fine Tracking & History |
+| **Librarian (Admin)** | `ADMIN01` *(or `admin`)* | `admin` | Full Inventory CRUD, Issue & Return, Student List, Inquiries |
+| **Student (Meet Tailor)** | `STU105` | `meet2006` | Borrow Books, Active Due Date Tracking, History |
+| **Student 1 (John Doe)** | `STU101` | `student123` | Borrow Books, Active Due Date Tracking, History |
+| **Student 2 (Emily Clark)** | `STU102` | `student123` | Overdue Fine Tracking & History |
 | **New Student** | *Custom Student ID* | *Custom Pass* | Register via the **Signup** tab on `login.html` |
 
 ---
