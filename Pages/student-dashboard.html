@@ -180,14 +180,21 @@
   function loadStudentBorrows(stuId) {
     let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');
     
-    // Seed sample default book for new logins if empty
-    if (borrows.length === 0 && !localStorage.getItem('slms_seeded_' + stuId)) {
+    // Seed sample default books ONLY for default demo student STU101 if first time
+    if (stuId === 'STU101' && borrows.length === 0 && !localStorage.getItem('slms_seeded_' + stuId)) {
       borrows = [
         {
           title: "The Wealth of Nations",
           isbn: "978-0140432084",
           issueDate: "18/09/2026",
           dueDate: "02/10/2026",
+          status: "Issued"
+        },
+        {
+          title: "Computer Networks & Systems",
+          isbn: "978-0132126953",
+          issueDate: "25/09/2026",
+          dueDate: "09/10/2026",
           status: "Issued"
         }
       ];
