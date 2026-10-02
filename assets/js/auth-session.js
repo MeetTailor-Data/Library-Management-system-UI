@@ -67,7 +67,7 @@ function updateNavbarAuth() {
   }
 }
 
-// Borrow book handler (Enforces mandatory student login)
+// Borrow book handler (Enforces mandatory student login & centralized circulation)
 function attemptBorrowBook(bookTitle, isbn) {
   const user = getCurrentUser();
   
@@ -82,31 +82,20 @@ function attemptBorrowBook(bookTitle, isbn) {
     return;
   }
 
-  // Calculate 14 days due date
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 14);
-  const formattedDueDate = dueDate.toLocaleDateString('en-GB');
-
-  // Add to student borrow record in localStorage
-  let myBorrows = JSON.parse(localStorage.getItem('slms_borrows_' + user.studentId) || '[]');
-  
-  // Check limit (Max 3 books)
-  if (myBorrows.length >= 3) {
-    alert(`Borrow Limit Exceeded: Student (${user.studentId}) already has 3 active borrowed books. Please return a book first.`);
-    return;
+  if (window.SLMS_STORE) {
+    const res = window.SLMS_STORE.issueBook(user.studentId, isbn);
+    if (!res.success) {
+      alert(res.message);
+      return;
+    }
+    alert(res.message);
+  } else {
+    // Fallback if store is offline
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14);
+    const formattedDueDate = dueDate.toLocaleDateString('en-GB');
+    alert(`Book Issued Successfully!\n\nBook: "${bookTitle}"\nAssigned Student ID: ${user.studentId}\nReturn Due Date: ${formattedDueDate}`);
   }
-
-  myBorrows.push({
-    title: bookTitle,
-    isbn: isbn,
-    issueDate: new Date().toLocaleDateString('en-GB'),
-    dueDate: formattedDueDate,
-    status: 'Issued'
-  });
-
-  localStorage.setItem('slms_borrows_' + user.studentId, JSON.stringify(myBorrows));
-
-  alert(`Book Issued Successfully!\n\nBook: "${bookTitle}"\nAssigned Student ID: ${user.studentId}\nReturn Due Date: ${formattedDueDate}`);
   
   // Redirect to student dashboard
   window.location.href = 'student-dashboard.html';

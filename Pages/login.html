@@ -165,6 +165,7 @@
     </div>
   </div>
 
+  <script src="../assets/js/slms-store.js"></script>
   <script src="../assets/js/auth-session.js"></script>
   <script>
     // If user is already logged in, redirect them directly to their dashboard
@@ -232,13 +233,27 @@
       }
 
       // Regular Student login
+      const stuRecord = window.SLMS_STORE ? window.SLMS_STORE.getStudentById(id) : null;
+      const stuName = stuRecord ? stuRecord.name : ('Student ' + id.toUpperCase());
+
+      // If not yet in store, register seamlessly
+      if (!stuRecord && window.SLMS_STORE) {
+        window.SLMS_STORE.addStudent({
+          studentId: id.toUpperCase(),
+          name: stuName,
+          email: `${id.toLowerCase()}@library.edu`,
+          department: 'General',
+          year: '1st Year'
+        });
+      }
+
       const studentUser = {
         role: 'student',
         studentId: id.toUpperCase(),
-        name: 'Student ' + id.toUpperCase()
+        name: stuName
       };
       setCurrentUser(studentUser);
-      alert(`Login Successful!\nLogged in as Student ID: ${id.toUpperCase()}`);
+      alert(`Login Successful!\nLogged in as Student ID: ${id.toUpperCase()} (${stuName})`);
 
       // Check URL redirect param
       const urlParams = new URLSearchParams(window.location.search);
@@ -258,6 +273,21 @@
       if (pass !== confirmPass) {
         showAlert('Passwords do not match. Please try again.', true);
         return false;
+      }
+
+      if (window.SLMS_STORE) {
+        const res = window.SLMS_STORE.addStudent({
+          studentId: stuId.toUpperCase(),
+          name: fullName,
+          email: email,
+          password: pass,
+          department: 'Computer Science',
+          year: '1st Year'
+        });
+        if (!res.success) {
+          showAlert(res.message, true);
+          return false;
+        }
       }
 
       const newStudent = {

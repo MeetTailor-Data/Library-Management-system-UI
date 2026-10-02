@@ -64,45 +64,32 @@
   </section>
 </main>
 
+<script src="../assets/js/slms-store.js"></script>
+<script src="../assets/js/auth-session.js"></script>
+<script src="../assets/js/main-animations.js"></script>
 <script>
   function handleContact(e) {
     e.preventDefault();
-    const form = document.getElementById('contactForm');
-    const formData = new FormData(form);
-    formData.append('action', 'submit');
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
 
-    fetch('../backend/contact.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      const alertBox = document.getElementById('contactAlert');
-      alertBox.style.display = 'block';
-      if (data.status) {
-        alertBox.style.background = '#e8f5e9';
-        alertBox.style.color = '#2e7d32';
-        alertBox.style.borderColor = '#a5d6a7';
-        alertBox.innerText = data.message || 'Message sent successfully!';
-        form.reset();
-      } else {
-        alertBox.style.background = '#ffebee';
-        alertBox.style.color = '#c62828';
-        alertBox.style.borderColor = '#ef9a9a';
-        alertBox.innerText = data.message || 'Error sending message.';
-      }
-    })
-    .catch(err => {
-      const alertBox = document.getElementById('contactAlert');
-      alertBox.style.display = 'block';
-      alertBox.innerText = 'Thank you! Your message has been received.';
-      form.reset();
-    });
+    if (window.SLMS_STORE) {
+      window.SLMS_STORE.addMessage({ name, email, subject, message });
+    }
 
+    const alertBox = document.getElementById('contactAlert');
+    alertBox.style.display = 'block';
+    alertBox.style.background = '#e8f5e9';
+    alertBox.style.color = '#2e7d32';
+    alertBox.style.borderColor = '#a5d6a7';
+    alertBox.innerText = 'Thank you! Your inquiry has been submitted and forwarded to the Librarian.';
+    
+    document.getElementById('contactForm').reset();
     return false;
   }
 </script>
-
 
 <!-- ===== FOOTER ===== -->
 <footer class="main-footer">
@@ -116,9 +103,10 @@
         <h3>Quick Links</h3>
         <ul>
           <li><a href="index.html">Home</a></li>
-          <li><a href="aboutus.html">About</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
           <li><a href="services.html">Services</a></li>
           <li><a href="catalog.html">Catalog</a></li>
+          <li><a href="contect.html">Contact</a></li>
         </ul>
       </div>
 
@@ -133,8 +121,5 @@
       <p>&copy; 2026 Library Management System</p>
     </div>
   </footer>
-
-  <script src="../assets/js/auth-session.js"></script>
-  <script src="../assets/js/main-animations.js"></script>
 </body>
 </html>

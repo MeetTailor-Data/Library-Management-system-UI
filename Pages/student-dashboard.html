@@ -55,11 +55,11 @@
     </div>
     <div class="stat-card green">
       <h4>Returned Books</h4>
-      <div class="stat-number">2</div>
+      <div class="stat-number" id="statReturnedCount">0</div>
     </div>
     <div class="stat-card red">
       <h4>Pending Fine Dues</h4>
-      <div class="stat-number">₹0.00</div>
+      <div class="stat-number" id="statFineCount">₹0.00</div>
     </div>
   </div>
 
@@ -99,23 +99,13 @@
           <th>Fine Paid</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Sapiens: A Brief History</td>
-          <td>01 Aug 2026</td>
-          <td>14 Aug 2026</td>
-          <td><span class="status-badge status-returned">Returned</span></td>
-          <td>₹0.00</td>
-        </tr>
-        <tr>
-          <td>The World as I See It</td>
-          <td>10 Jul 2026</td>
-          <td>24 Jul 2026</td>
-          <td><span class="status-badge status-returned">Returned</span></td>
-          <td>₹0.00</td>
-        </tr>
+      <tbody id="studentHistoryBody">
+        <!-- Dynamically rendered -->
       </tbody>
     </table>
+    <div id="noHistoryMsg" style="display: none; padding: 20px; text-align: center; color: #777;">
+      No past return records found.
+    </div>
   </div>
 </div>
 
@@ -150,9 +140,12 @@
   </div>
 </footer>
 
+<script src="../assets/js/slms-store.js"></script>
 <script src="../assets/js/auth-session.js"></script>
 <script src="../assets/js/main-animations.js"></script>
 <script>
+  let currentStudentId = null;
+
   function initStudentDashboard() {
     const user = getCurrentUser();
     
@@ -168,89 +161,102 @@
       return;
     }
 
-    const stuId = user.studentId || 'STU101';
-    const stuName = user.name || stuId;
+    currentStudentId = user.studentId || 'STU101';
+    const stuName = user.name || currentStudentId;
 
     const headerStuName = document.getElementById('headerStuName');
     if (headerStuName) {
-      headerStuName.innerText = `${stuName} (${stuId})`;
+      headerStuName.innerText = `${stuName} (${currentStudentId})`;
     }
     const displayStudentId = document.getElementById('displayStudentId');
     if (displayStudentId) {
-      displayStudentId.innerText = stuId;
+      displayStudentId.innerText = currentStudentId;
     }
 
-    loadStudentBorrows(stuId);
+    loadStudentBorrows(currentStudentId);
   }
+
+  function loadStudentBorrows(stuId) {
+    if (!window.SLMS_STORE) return;
+
+    const activeBorrows = window.SLMS_STORE.getStudentActiveBorrows(stuId);
+    const historyBorrows = window.SLMS_STORE.getStudentHistory(stuId);
+
+    // Update Stats
+    document.getElementById('statBorrowedCount').innerText = activeBorrows.length;
+    document.getElementById('statReturnedCount').innerText = historyBorrows.length;
+
+    const totalFines = activeBorrows.reduce((acc, c) => acc + (c.fine || 0), 0);
+    document.getElementById('statFineCount').innerText = `₹${totalFines.toFixed(2)}`;
+
+    // Render Active Issued Books
+    const tbody = document.getElementById('studentIssuedBody');
+    const noMsg = document.getElementById('noIssuedMsg');
+    tbody.innerHTML = '';
+
+    if (activeBorrows.length === 0) {
+      noMsg.style.display = 'block';
+    } else {
+      noMsg.style.display = 'none';
+      activeBorrows.forEach(b => {
+        const tr = document.createElement('tr');
+        const statusClass = b.status === 'Overdue' ? 'status-overdue' : 'status-issued';
+        tr.innerHTML = `
+          <td><strong>${b.bookTitle}</strong></td>
+          <td>${b.isbn || 'N/A'}</td>
+          <td>${b.issueDate}</td>
+          <td>${b.dueDate}</td>
+          <td><span class="status-badge ${statusClass}">${b.status}</span></td>
+          <td>
+            <button class="btn-sm btn-dark" onclick="returnMyBook(${b.id}, '${b.bookTitle}')">Return Book</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Return History
+    const historyTbody = document.getElementById('studentHistoryBody');
+    const noHistoryMsg = document.getElementById('noHistoryMsg');
+    historyTbody.innerHTML = '';
+
+    if (historyBorrows.length === 0) {
+      noHistoryMsg.style.display = 'block';
+    } else {
+      noHistoryMsg.style.display = 'none';
+      historyBorrows.forEach(h => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${h.bookTitle}</strong></td>
+          <td>${h.issueDate}</td>
+          <td>${h.returnDate || 'N/A'}</td>
+          <td><span class="status-badge status-returned">Returned</span></td>
+          <td>₹${(h.fine || 0).toFixed(2)}</td>
+        `;
+        historyTbody.appendChild(tr);
+      });
+    }
+  }
+
+  function returnMyBook(circulationId, title) {
+    if (confirm(`Do you want to return "${title}" to the library?`)) {
+      const res = window.SLMS_STORE.returnBook(circulationId);
+      alert(res.message);
+      loadStudentBorrows(currentStudentId);
+    }
+  }
+
+  // Reactive listener for data updates across tabs or admin actions
+  window.addEventListener('slms_data_changed', () => {
+    if (currentStudentId) {
+      loadStudentBorrows(currentStudentId);
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initStudentDashboard);
   } else {
     initStudentDashboard();
-  }
-
-  function loadStudentBorrows(stuId) {
-    let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');
-    
-    // Seed sample default books ONLY for default demo student STU101 if first time
-    if (stuId === 'STU101' && borrows.length === 0 && !localStorage.getItem('slms_seeded_' + stuId)) {
-      borrows = [
-        {
-          title: "The Wealth of Nations",
-          isbn: "978-0140432084",
-          issueDate: "18/09/2026",
-          dueDate: "02/10/2026",
-          status: "Issued"
-        },
-        {
-          title: "Computer Networks & Systems",
-          isbn: "978-0132126953",
-          issueDate: "25/09/2026",
-          dueDate: "09/10/2026",
-          status: "Issued"
-        }
-      ];
-      localStorage.setItem('slms_borrows_' + stuId, JSON.stringify(borrows));
-      localStorage.setItem('slms_seeded_' + stuId, 'true');
-    }
-
-    const tbody = document.getElementById('studentIssuedBody');
-    const noMsg = document.getElementById('noIssuedMsg');
-    tbody.innerHTML = '';
-
-    document.getElementById('statBorrowedCount').innerText = borrows.length;
-
-    if (borrows.length === 0) {
-      noMsg.style.display = 'block';
-      return;
-    }
-
-    noMsg.style.display = 'none';
-
-    borrows.forEach((b, index) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><strong>${b.title}</strong></td>
-        <td>${b.isbn || 'N/A'}</td>
-        <td>${b.issueDate}</td>
-        <td>${b.dueDate}</td>
-        <td><span class="status-badge status-issued">${b.status}</span></td>
-        <td>
-          <button class="btn-sm btn-dark" onclick="returnMyBook('${stuId}', ${index}, '${b.title}')">Return Book</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function returnMyBook(stuId, index, title) {
-    if (confirm(`Do you want to return "${title}" to the library?`)) {
-      let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');
-      borrows.splice(index, 1);
-      localStorage.setItem('slms_borrows_' + stuId, JSON.stringify(borrows));
-      alert(`Book "${title}" marked as returned!`);
-      loadStudentBorrows(stuId);
-    }
   }
 </script>
 </body>

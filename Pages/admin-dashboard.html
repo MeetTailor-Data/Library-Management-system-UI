@@ -57,19 +57,19 @@
       <div class="stats-grid">
         <div class="stat-card">
           <h4>Total Books</h4>
-          <div class="stat-number">10 Titles</div>
+          <div class="stat-number" id="admStatTotalBooks">0 Titles</div>
         </div>
         <div class="stat-card blue">
           <h4>Issued Books</h4>
-          <div class="stat-number">2 Books</div>
+          <div class="stat-number" id="admStatIssuedBooks">0 Books</div>
         </div>
         <div class="stat-card green">
           <h4>Registered Students</h4>
-          <div class="stat-number">45</div>
+          <div class="stat-number" id="admStatStudents">0</div>
         </div>
         <div class="stat-card red">
           <h4>Overdue Books</h4>
-          <div class="stat-number">1</div>
+          <div class="stat-number" id="admStatOverdue">0</div>
         </div>
       </div>
 
@@ -86,31 +86,8 @@
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>STU101</td>
-              <td>John Doe</td>
-              <td>The Wealth of Nations</td>
-              <td>18 Sep 2026</td>
-              <td>02 Oct 2026</td>
-              <td><span class="status-badge status-issued">Issued</span></td>
-            </tr>
-            <tr>
-              <td>STU102</td>
-              <td>Emily Clark</td>
-              <td>Clean Architecture</td>
-              <td>10 Sep 2026</td>
-              <td>24 Sep 2026</td>
-              <td><span class="status-badge status-overdue">Overdue</span></td>
-            </tr>
-            <tr>
-              <td>STU103</td>
-              <td>David Miller</td>
-              <td>Sapiens: A Brief History</td>
-              <td>01 Aug 2026</td>
-              <td>14 Aug 2026</td>
-              <td><span class="status-badge status-returned">Returned</span></td>
-            </tr>
+          <tbody id="adminRecentTransBody">
+            <!-- Dynamically rendered -->
           </tbody>
         </table>
       </div>
@@ -121,7 +98,10 @@
       <div class="dashboard-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h2 style="margin: 0; border: none; padding: 0;">Books List</h2>
-          <input type="text" class="search-table-input" id="inventorySearch" placeholder="Search books..." onkeyup="filterInventoryTable()">
+          <div style="display: flex; gap: 10px;">
+            <input type="text" class="search-table-input" id="inventorySearch" placeholder="Search books..." onkeyup="filterInventoryTable()">
+            <button type="button" class="btn-primary" style="border:none; cursor:pointer; font-size: 13px; padding: 8px 14px;" onclick="openAddBookModal()">+ Add Book</button>
+          </div>
         </div>
 
         <table class="custom-table">
@@ -132,77 +112,13 @@
               <th>Author</th>
               <th>Category</th>
               <th>ISBN</th>
-              <th>Copies</th>
+              <th>Total</th>
               <th>Available</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="inventoryTableBody">
-            <tr>
-              <td><img src="../assets/images/b9.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-              <td><strong>The Wealth of Nations</strong></td>
-              <td>Adam Smith</td>
-              <td>Economics</td>
-              <td>978-0140432084</td>
-              <td>5</td>
-              <td>4</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td><img src="../assets/images/b10.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-              <td><strong>The World as I See It</strong></td>
-              <td>Albert Einstein</td>
-              <td>Science</td>
-              <td>978-0806527901</td>
-              <td>4</td>
-              <td>4</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td><img src="../assets/images/b1.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-              <td><strong>Computer Networks</strong></td>
-              <td>Andrew S. Tanenbaum</td>
-              <td>Technology</td>
-              <td>978-0132126953</td>
-              <td>4</td>
-              <td>3</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td><img src="../assets/images/b2.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-              <td><strong>Clean Architecture</strong></td>
-              <td>Robert C. Martin</td>
-              <td>Technology</td>
-              <td>978-0134494166</td>
-              <td>3</td>
-              <td>2</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td><img src="../assets/images/b3.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-              <td><strong>Brief History of Time</strong></td>
-              <td>Stephen Hawking</td>
-              <td>Science</td>
-              <td>978-0553380163</td>
-              <td>6</td>
-              <td>6</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-              </td>
-            </tr>
+            <!-- Dynamically rendered -->
           </tbody>
         </table>
       </div>
@@ -212,7 +128,7 @@
     <div id="tab-circulation" class="tab-content">
       <div class="dashboard-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-          <h2 style="margin: 0; border: none; padding: 0;">Issued Books</h2>
+          <h2 style="margin: 0; border: none; padding: 0;">Issued Books & Circulation</h2>
           <button class="btn-primary" style="border:none; cursor:pointer;" onclick="openIssueModal()">+ Issue Book</button>
         </div>
 
@@ -229,28 +145,7 @@
             </tr>
           </thead>
           <tbody id="circulationBody">
-            <tr>
-              <td>STU101</td>
-              <td>John Doe</td>
-              <td>The Wealth of Nations</td>
-              <td>18 Sep 2026</td>
-              <td>02 Oct 2026</td>
-              <td><span class="status-badge status-issued">Issued</span></td>
-              <td>
-                <button class="btn-sm btn-success" onclick="returnBookRow(this, false)">Return</button>
-              </td>
-            </tr>
-            <tr>
-              <td>STU102</td>
-              <td>Emily Clark</td>
-              <td>Clean Architecture</td>
-              <td>10 Sep 2026</td>
-              <td>24 Sep 2026</td>
-              <td><span class="status-badge status-overdue">Overdue</span></td>
-              <td>
-                <button class="btn-sm btn-danger" onclick="returnBookRow(this, true)">Return (Late)</button>
-              </td>
-            </tr>
+            <!-- Dynamically rendered -->
           </tbody>
         </table>
       </div>
@@ -261,7 +156,10 @@
       <div class="dashboard-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h2 style="margin: 0; border: none; padding: 0;">Registered Students</h2>
-          <input type="text" class="search-table-input" id="studentSearch" placeholder="Search student..." onkeyup="filterStudentTable()">
+          <div style="display: flex; gap: 10px;">
+            <input type="text" class="search-table-input" id="studentSearch" placeholder="Search student..." onkeyup="filterStudentTable()">
+            <button type="button" class="btn-primary" style="border:none; cursor:pointer; font-size: 13px; padding: 8px 14px;" onclick="openAddStudentModal()">+ Add Student</button>
+          </div>
         </div>
 
         <table class="custom-table" id="studentTable">
@@ -270,39 +168,13 @@
               <th>Student ID</th>
               <th>Full Name</th>
               <th>Email</th>
-              <th>Books Issued</th>
+              <th>Department / Year</th>
+              <th>Active Borrows</th>
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>STU101</td>
-              <td>John Doe</td>
-              <td>john@example.com</td>
-              <td>1</td>
-              <td><span class="status-badge status-returned">Active</span></td>
-            </tr>
-            <tr>
-              <td>STU102</td>
-              <td>Emily Clark</td>
-              <td>emily@example.com</td>
-              <td>1</td>
-              <td><span class="status-badge status-overdue">Overdue Fine</span></td>
-            </tr>
-            <tr>
-              <td>STU103</td>
-              <td>David Miller</td>
-              <td>david@example.com</td>
-              <td>0</td>
-              <td><span class="status-badge status-returned">Active</span></td>
-            </tr>
-            <tr>
-              <td>STU104</td>
-              <td>Sophia Taylor</td>
-              <td>sophia@example.com</td>
-              <td>0</td>
-              <td><span class="status-badge status-returned">Active</span></td>
-            </tr>
+          <tbody id="adminStudentsBody">
+            <!-- Dynamically rendered -->
           </tbody>
         </table>
       </div>
@@ -311,36 +183,21 @@
     <!-- ================= TAB 5: MESSAGES ================= -->
     <div id="tab-messages" class="tab-content">
       <div class="dashboard-section">
-        <h2 style="margin-bottom: 15px;">Messages</h2>
+        <h2 style="margin-bottom: 15px;">Contact Messages & Inquiries</h2>
         <table class="custom-table">
           <thead>
             <tr>
+              <th>Date</th>
               <th>Name</th>
               <th>Email</th>
               <th>Subject</th>
               <th>Message</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Rahul Sharma</td>
-              <td>rahul@gmail.com</td>
-              <td>Book Request: Data Structures</td>
-              <td>Please add more copies of Data Structures books.</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="alert('Replying to sender')">Reply</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Ananya Patel</td>
-              <td>ananya@gmail.com</td>
-              <td>Membership Question</td>
-              <td>How can I renew my membership card online?</td>
-              <td>
-                <button class="btn-sm btn-dark" onclick="alert('Replying to sender')">Reply</button>
-              </td>
-            </tr>
+          <tbody id="adminMessagesBody">
+            <!-- Dynamically rendered -->
           </tbody>
         </table>
       </div>
@@ -361,11 +218,14 @@
           <input type="text" id="newBookAuthor" placeholder="Author Name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
         </div>
         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-          <input type="text" id="newBookCategory" placeholder="Category" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-          <input type="text" id="newBookIsbn" placeholder="ISBN" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          <input type="text" id="newBookCategory" placeholder="Category (e.g. Science, Tech)" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          <input type="text" id="newBookIsbn" placeholder="ISBN (e.g. 978-0134494166)" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
         </div>
         <div style="margin-bottom: 10px;">
           <input type="number" id="newBookCopies" placeholder="Total Copies" min="1" value="5" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <textarea id="newBookDesc" placeholder="Short description of the book..." rows="2" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
         </div>
         <div class="modal-actions">
           <button type="button" class="filter-btn" onclick="closeAddBookModal()">Cancel</button>
@@ -379,31 +239,57 @@
   <div class="modal-overlay" id="issueBookModal" onclick="if(event.target === this) closeIssueModal()">
     <div class="modal-card">
       <button class="modal-close" onclick="closeIssueModal()">&times;</button>
-      <h3 style="margin-bottom: 15px;">Issue Book</h3>
+      <h3 style="margin-bottom: 15px;">Issue Book to Student</h3>
       <form id="issueBookForm" onsubmit="handleIssueBook(event)">
         <div style="margin-bottom: 10px;">
-          <input type="text" id="issueStudentId" placeholder="Student ID (e.g. STU101)" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-        </div>
-        <div style="margin-bottom: 10px;">
-          <input type="text" id="issueStudentName" placeholder="Student Name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-        </div>
-        <div style="margin-bottom: 10px;">
-          <select id="issueBookSelect" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-            <option value="">-- Select Book --</option>
-            <option value="The Wealth of Nations">The Wealth of Nations</option>
-            <option value="The World as I See It">The World as I See It</option>
-            <option value="Computer Networks">Computer Networks</option>
-            <option value="Clean Architecture">Clean Architecture</option>
-            <option value="Brief History of Time">Brief History of Time</option>
+          <label style="font-size: 13px; color: #666;">Select Student</label>
+          <select id="issueStudentSelect" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-top: 4px;">
+            <!-- Dynamically rendered -->
           </select>
         </div>
         <div style="margin-bottom: 10px;">
-          <label style="font-size: 13px; color: #666;">Due Date (14 Days)</label>
+          <label style="font-size: 13px; color: #666;">Select Available Book</label>
+          <select id="issueBookSelect" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-top: 4px;">
+            <!-- Dynamically rendered -->
+          </select>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label style="font-size: 13px; color: #666;">Due Date (Default: 14 Days)</label>
           <input type="date" id="issueDueDate" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-top: 4px;">
         </div>
         <div class="modal-actions">
           <button type="button" class="filter-btn" onclick="closeIssueModal()">Cancel</button>
-          <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Issue</button>
+          <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Issue Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="addStudentModal" onclick="if(event.target === this) closeAddStudentModal()">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeAddStudentModal()">&times;</button>
+      <h3 style="margin-bottom: 15px;">Register New Student</h3>
+      <form id="addStudentForm" onsubmit="handleAddStudent(event)">
+        <div style="margin-bottom: 10px;">
+          <input type="text" id="newStuId" placeholder="Student ID (e.g. STU106)" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="text" id="newStuName" placeholder="Full Name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="email" id="newStuEmail" placeholder="Email Address" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <input type="text" id="newStuDept" placeholder="Department" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          <input type="text" id="newStuYear" placeholder="Year / Semester" required style="flex:1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="text" id="newStuPhone" placeholder="Phone Number" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="filter-btn" onclick="closeAddStudentModal()">Cancel</button>
+          <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Register Student</button>
         </div>
       </form>
     </div>
@@ -440,6 +326,9 @@
     </div>
   </footer>
 
+  <script src="../assets/js/slms-store.js"></script>
+  <script src="../assets/js/auth-session.js"></script>
+  <script src="../assets/js/main-animations.js"></script>
   <script>
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -449,6 +338,185 @@
       btn.classList.add('active');
     }
 
+    // Render Overview Tab
+    function renderOverview() {
+      if (!window.SLMS_STORE) return;
+      const stats = window.SLMS_STORE.getOverviewStats();
+      
+      document.getElementById('admStatTotalBooks').innerText = `${stats.totalTitles} Titles (${stats.totalBooks} Copies)`;
+      document.getElementById('admStatIssuedBooks').innerText = `${stats.issuedBooks} Books`;
+      document.getElementById('admStatStudents').innerText = `${stats.registeredStudents}`;
+      document.getElementById('admStatOverdue').innerText = `${stats.overdueBooks}`;
+
+      const tbody = document.getElementById('adminRecentTransBody');
+      tbody.innerHTML = '';
+      const circulations = window.SLMS_STORE.getCirculations().slice(0, 8);
+
+      circulations.forEach(c => {
+        const tr = document.createElement('tr');
+        const statusClass = c.status === 'Overdue' ? 'status-overdue' : (c.status === 'Returned' ? 'status-returned' : 'status-issued');
+        tr.innerHTML = `
+          <td><strong>${c.studentId}</strong></td>
+          <td>${c.studentName}</td>
+          <td>${c.bookTitle}</td>
+          <td>${c.issueDate}</td>
+          <td>${c.dueDate}</td>
+          <td><span class="status-badge ${statusClass}">${c.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Inventory Tab
+    function renderInventory() {
+      if (!window.SLMS_STORE) return;
+      const books = window.SLMS_STORE.getBooks();
+      const tbody = document.getElementById('inventoryTableBody');
+      tbody.innerHTML = '';
+
+      books.forEach(b => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${b.image || '../assets/images/b1.jpg'}" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
+          <td><strong>${b.title}</strong></td>
+          <td>${b.author}</td>
+          <td><span class="category-tag" style="margin:0;">${b.category}</span></td>
+          <td>${b.isbn}</td>
+          <td>${b.totalCopies}</td>
+          <td><strong style="color: ${b.availableCopies > 0 ? '#28a745' : '#dc3545'};">${b.availableCopies}</strong></td>
+          <td>
+            <button class="btn-sm btn-dark" onclick="editBook('${b.isbn}')">Edit</button>
+            <button class="btn-sm btn-danger" onclick="deleteBook('${b.isbn}')">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Circulation Tab
+    function renderCirculation() {
+      if (!window.SLMS_STORE) return;
+      const circulations = window.SLMS_STORE.getCirculations();
+      const tbody = document.getElementById('circulationBody');
+      tbody.innerHTML = '';
+
+      circulations.forEach(c => {
+        const tr = document.createElement('tr');
+        const statusClass = c.status === 'Overdue' ? 'status-overdue' : (c.status === 'Returned' ? 'status-returned' : 'status-issued');
+        const actionBtn = c.status === 'Returned' 
+          ? '<span style="color:#28a745; font-size:12px; font-weight:bold;">Returned</span>'
+          : `<button class="btn-sm btn-success" onclick="adminReturnBook(${c.id}, '${c.bookTitle}')">Return</button>`;
+
+        tr.innerHTML = `
+          <td><strong>${c.studentId}</strong></td>
+          <td>${c.studentName}</td>
+          <td>${c.bookTitle}</td>
+          <td>${c.issueDate}</td>
+          <td>${c.dueDate}</td>
+          <td><span class="status-badge ${statusClass}">${c.status}</span></td>
+          <td>${actionBtn}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Students Tab
+    function renderStudents() {
+      if (!window.SLMS_STORE) return;
+      const students = window.SLMS_STORE.getStudents();
+      const tbody = document.getElementById('adminStudentsBody');
+      tbody.innerHTML = '';
+
+      students.forEach(s => {
+        const activeBorrows = window.SLMS_STORE.getStudentActiveBorrows(s.studentId);
+        const hasOverdue = activeBorrows.some(b => b.status === 'Overdue');
+        const statusBadge = hasOverdue 
+          ? '<span class="status-badge status-overdue">Overdue Fine</span>'
+          : '<span class="status-badge status-returned">Active</span>';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${s.studentId}</strong></td>
+          <td>${s.name}</td>
+          <td>${s.email}</td>
+          <td>${s.department} (${s.year || 'General'})</td>
+          <td><strong>${activeBorrows.length} / 3</strong></td>
+          <td>${statusBadge}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Messages Tab
+    function renderMessages() {
+      if (!window.SLMS_STORE) return;
+      const msgs = window.SLMS_STORE.getMessages();
+      const tbody = document.getElementById('adminMessagesBody');
+      tbody.innerHTML = '';
+
+      if (msgs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#777;">No contact inquiries found.</td></tr>';
+        return;
+      }
+
+      msgs.forEach(m => {
+        const tr = document.createElement('tr');
+        const statusBadge = m.status === 'Unread'
+          ? '<span class="status-badge status-overdue">Unread</span>'
+          : '<span class="status-badge status-returned">Replied</span>';
+
+        tr.innerHTML = `
+          <td>${m.date}</td>
+          <td><strong>${m.name}</strong></td>
+          <td>${m.email}</td>
+          <td>${m.subject}</td>
+          <td>${m.message}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <button class="btn-sm btn-dark" onclick="replyAdminMessage(${m.id}, '${m.email}')">Reply</button>
+            <button class="btn-sm btn-danger" onclick="deleteAdminMessage(${m.id})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Populate Issue Modal Selects
+    function populateIssueModalOptions() {
+      const stuSelect = document.getElementById('issueStudentSelect');
+      const bookSelect = document.getElementById('issueBookSelect');
+      if (!stuSelect || !bookSelect || !window.SLMS_STORE) return;
+
+      const students = window.SLMS_STORE.getStudents();
+      stuSelect.innerHTML = '<option value="">-- Choose Student --</option>';
+      students.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.studentId;
+        opt.text = `${s.studentId} - ${s.name} (${s.department})`;
+        stuSelect.appendChild(opt);
+      });
+
+      const books = window.SLMS_STORE.getBooks();
+      bookSelect.innerHTML = '<option value="">-- Choose Book --</option>';
+      books.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.isbn;
+        opt.text = `${b.title} (${b.availableCopies} available)`;
+        if (b.availableCopies <= 0) opt.disabled = true;
+        bookSelect.appendChild(opt);
+      });
+    }
+
+    // Refresh all tables
+    function refreshAdminDashboard() {
+      renderOverview();
+      renderInventory();
+      renderCirculation();
+      renderStudents();
+      renderMessages();
+    }
+
+    // Modals
     function openAddBookModal() {
       document.getElementById('addBookModal').classList.add('active');
     }
@@ -459,12 +527,20 @@
       const date = new Date();
       date.setDate(date.getDate() + 14);
       document.getElementById('issueDueDate').value = date.toISOString().split('T')[0];
+      populateIssueModalOptions();
       document.getElementById('issueBookModal').classList.add('active');
     }
     function closeIssueModal() {
       document.getElementById('issueBookModal').classList.remove('active');
     }
+    function openAddStudentModal() {
+      document.getElementById('addStudentModal').classList.add('active');
+    }
+    function closeAddStudentModal() {
+      document.getElementById('addStudentModal').classList.remove('active');
+    }
 
+    // Actions
     function handleAddBook(e) {
       e.preventDefault();
       const title = document.getElementById('newBookTitle').value;
@@ -472,85 +548,111 @@
       const category = document.getElementById('newBookCategory').value;
       const isbn = document.getElementById('newBookIsbn').value;
       const copies = document.getElementById('newBookCopies').value;
+      const desc = document.getElementById('newBookDesc').value;
 
-      const tbody = document.getElementById('inventoryTableBody');
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><img src="../assets/images/b1.jpg" style="width: 35px; height: 50px; object-fit: cover; border-radius: 3px;"></td>
-        <td><strong>${title}</strong></td>
-        <td>${author}</td>
-        <td>${category}</td>
-        <td>${isbn}</td>
-        <td>${copies}</td>
-        <td>${copies}</td>
-        <td>
-          <button class="btn-sm btn-dark" onclick="editBook(this)">Edit</button>
-          <button class="btn-sm btn-danger" onclick="deleteBook(this)">Delete</button>
-        </td>
-      `;
-      tbody.prepend(tr);
+      window.SLMS_STORE.addBook({
+        title,
+        author,
+        category,
+        isbn,
+        totalCopies: copies,
+        availableCopies: copies,
+        description: desc
+      });
 
-      const opt = document.createElement('option');
-      opt.value = title;
-      opt.text = title;
-      document.getElementById('issueBookSelect').appendChild(opt);
-
-      alert(`Book "${title}" added successfully.`);
+      alert(`Book "${title}" added to inventory and public catalog!`);
       document.getElementById('addBookForm').reset();
       closeAddBookModal();
+      refreshAdminDashboard();
     }
 
     function handleIssueBook(e) {
       e.preventDefault();
-      const stuId = document.getElementById('issueStudentId').value;
-      const stuName = document.getElementById('issueStudentName').value;
-      const bookTitle = document.getElementById('issueBookSelect').value;
-      const dueDate = document.getElementById('issueDueDate').value;
+      const stuId = document.getElementById('issueStudentSelect').value;
+      const isbn = document.getElementById('issueBookSelect').value;
+      const dueDateVal = document.getElementById('issueDueDate').value;
 
-      const tbody = document.getElementById('circulationBody');
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${stuId}</td>
-        <td>${stuName}</td>
-        <td>${bookTitle}</td>
-        <td>Today</td>
-        <td>${dueDate}</td>
-        <td><span class="status-badge status-issued">Issued</span></td>
-        <td>
-          <button class="btn-sm btn-success" onclick="returnBookRow(this, false)">Return</button>
-        </td>
-      `;
-      tbody.prepend(tr);
+      const formattedDueDate = dueDateVal 
+        ? new Date(dueDateVal).toLocaleDateString('en-GB')
+        : null;
 
-      alert(`Book "${bookTitle}" issued to ${stuName}.`);
-      document.getElementById('issueBookForm').reset();
-      closeIssueModal();
-    }
+      const res = window.SLMS_STORE.issueBook(stuId, isbn, formattedDueDate);
+      alert(res.message);
 
-    function returnBookRow(btn, isOverdue) {
-      const row = btn.closest('tr');
-      if (isOverdue) {
-        alert('Book returned with overdue fine.');
-      } else {
-        alert('Book returned successfully.');
-      }
-      row.cells[5].innerHTML = '<span class="status-badge status-returned">Returned</span>';
-      btn.outerHTML = '<span style="color:#28a745; font-size:12px; font-weight:bold;">Returned</span>';
-    }
-
-    function deleteBook(btn) {
-      if (confirm('Are you sure you want to remove this book?')) {
-        btn.closest('tr').remove();
-        alert('Book deleted.');
+      if (res.success) {
+        document.getElementById('issueBookForm').reset();
+        closeIssueModal();
+        refreshAdminDashboard();
       }
     }
 
-    function editBook(btn) {
-      const row = btn.closest('tr');
-      const currentTitle = row.cells[1].innerText;
-      const newTitle = prompt('Edit Book Title:', currentTitle);
-      if (newTitle) {
-        row.cells[1].innerHTML = `<strong>${newTitle}</strong>`;
+    function handleAddStudent(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('newStuId').value;
+      const name = document.getElementById('newStuName').value;
+      const email = document.getElementById('newStuEmail').value;
+      const department = document.getElementById('newStuDept').value;
+      const year = document.getElementById('newStuYear').value;
+      const phone = document.getElementById('newStuPhone').value;
+
+      const res = window.SLMS_STORE.addStudent({
+        studentId,
+        name,
+        email,
+        department,
+        year,
+        phone
+      });
+
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+
+      alert(`Student ${name} (${studentId}) registered successfully!`);
+      document.getElementById('addStudentForm').reset();
+      closeAddStudentModal();
+      refreshAdminDashboard();
+    }
+
+    function adminReturnBook(circId, title) {
+      if (confirm(`Confirm return of "${title}" to the library?`)) {
+        const res = window.SLMS_STORE.returnBook(circId);
+        alert(res.message);
+        refreshAdminDashboard();
+      }
+    }
+
+    function deleteBook(isbn) {
+      const book = window.SLMS_STORE.getBookByIsbn(isbn);
+      if (!book) return;
+      if (confirm(`Are you sure you want to remove "${book.title}" from the catalog?`)) {
+        window.SLMS_STORE.deleteBook(isbn);
+        alert(`Book "${book.title}" removed.`);
+        refreshAdminDashboard();
+      }
+    }
+
+    function editBook(isbn) {
+      const book = window.SLMS_STORE.getBookByIsbn(isbn);
+      if (!book) return;
+      const newTitle = prompt('Edit Book Title:', book.title);
+      if (newTitle && newTitle.trim()) {
+        window.SLMS_STORE.updateBook(isbn, { title: newTitle.trim() });
+        refreshAdminDashboard();
+      }
+    }
+
+    function replyAdminMessage(id, email) {
+      prompt(`Enter your email reply to ${email}:`, 'Thank you for reaching out to the library.');
+      window.SLMS_STORE.replyMessage(id);
+      refreshAdminDashboard();
+    }
+
+    function deleteAdminMessage(id) {
+      if (confirm('Delete this message?')) {
+        window.SLMS_STORE.deleteMessage(id);
+        refreshAdminDashboard();
       }
     }
 
@@ -564,11 +666,14 @@
 
     function filterStudentTable() {
       const q = document.getElementById('studentSearch').value.toLowerCase();
-      const rows = document.querySelectorAll('#studentTable tbody tr');
+      const rows = document.querySelectorAll('#adminStudentsBody tr');
       rows.forEach(r => {
         r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
       });
     }
+
+    // Reactive listener for data updates across tabs
+    window.addEventListener('slms_data_changed', refreshAdminDashboard);
 
     document.addEventListener('DOMContentLoaded', () => {
       const user = getCurrentUser();
@@ -580,10 +685,11 @@
       if (user.role !== 'admin') {
         alert('Access Denied: Only Librarians/Admins can access this panel. Redirecting to your student dashboard.');
         window.location.href = 'student-dashboard.html';
+        return;
       }
+
+      refreshAdminDashboard();
     });
   </script>
-  <script src="../assets/js/auth-session.js"></script>
-  <script src="../assets/js/main-animations.js"></script>
 </body>
 </html>
