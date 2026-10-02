@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "user_id": "ADMIN01",
+    "name": "System Librarian",
+    "email": "admin@library.com",
+    "password": "admin123",
+    "role": "admin",
+    "created_at": "2026-01-01"
+  },
+  {
+    "id": 2,
+    "user_id": "STU101",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "student123",
+    "role": "student",
+    "created_at": "2026-02-15"
+  },
+  {
+    "id": 3,
+    "user_id": "STU102",
+    "name": "Emily Clark",
+    "email": "emily@example.com",
+    "password": "student123",
+    "role": "student",
+    "created_at": "2026-03-10"
+  },
+  {
+    "id": 4,
+    "user_id": "STU103",
+    "name": "David Miller",
+    "email": "david@example.com",
+    "password": "student123",
+    "role": "student",
+    "created_at": "2026-04-05"
+  }
+]

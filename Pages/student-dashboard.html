@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Smart Library</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="main-header">
+    <div class="container header-flex">
+      <div class="logo">
+        <img src="../assets/images/logo.png" alt="The Library Logo">
+      </div>
+
+      <nav class="navbar">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="catalog.html">Catalog</a></li>
+          <li><a href="student-dashboard.html" class="active">My Dashboard</a></li>
+          <li><a href="contect.html">Contact</a></li>
+        </ul>
+      </nav>
+
+    <div id="navbarAuthArea">
+      <span style="font-size: 14px; margin-right: 12px; color: #555;">Welcome, <strong id="headerStuName">Student</strong></span>
+      <button onclick="logoutUser()" class="btn-primary" style="padding: 8px 16px; font-size: 13px; border:none; cursor:pointer;">Logout</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= DASHBOARD CONTENT ================= -->
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1>Student Portal</h1>
+      <p style="color: #666;">Assigned Student ID: <strong id="displayStudentId">STU101</strong></p>
+    </div>
+    <div>
+      <a href="catalog.html" class="btn-secondary" style="font-size: 14px;">+ Search & Borrow Books</a>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h4>Books Currently Borrowed</h4>
+      <div class="stat-number" id="statBorrowedCount">0</div>
+    </div>
+    <div class="stat-card blue">
+      <h4>Allowed Borrow Limit</h4>
+      <div class="stat-number">3 Books</div>
+    </div>
+    <div class="stat-card green">
+      <h4>Returned Books</h4>
+      <div class="stat-number">2</div>
+    </div>
+    <div class="stat-card red">
+      <h4>Pending Fine Dues</h4>
+      <div class="stat-number">₹0.00</div>
+    </div>
+  </div>
+
+  <!-- Active Borrowed Books Section -->
+  <div class="dashboard-section">
+    <h2>Currently Issued Books</h2>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>ISBN</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentIssuedBody">
+        <!-- Dynamically rendered -->
+      </tbody>
+    </table>
+    <div id="noIssuedMsg" style="display: none; padding: 20px; text-align: center; color: #777;">
+      You have no active borrowed books. <a href="catalog.html" style="color: #ff5722;">Explore the Catalog</a> to issue a book.
+    </div>
+  </div>
+
+  <!-- Borrowing History Section -->
+  <div class="dashboard-section">
+    <h2>My Borrowing History</h2>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Issue Date</th>
+          <th>Return Date</th>
+          <th>Status</th>
+          <th>Fine Paid</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sapiens: A Brief History</td>
+          <td>01 Aug 2026</td>
+          <td>14 Aug 2026</td>
+          <td><span class="status-badge status-returned">Returned</span></td>
+          <td>₹0.00</td>
+        </tr>
+        <tr>
+          <td>The World as I See It</td>
+          <td>10 Jul 2026</td>
+          <td>24 Jul 2026</td>
+          <td><span class="status-badge status-returned">Returned</span></td>
+          <td>₹0.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="main-footer">
+  <div class="container footer-grid">
+    <div>
+      <h3>About Us</h3>
+      <p>A vibrant hub of knowledge and resources for learners and readers.</p>
+    </div>
+
+    <div>
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="aboutus.html">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="catalog.html">Catalog</a></li>
+        <li><a href="contect.html">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Contact</h3>
+      <p>Email: library@gmail.com</p>
+      <p>Phone: 1211271351</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 Library Management System</p>
+  </div>
+</footer>
+
+<script src="../assets/js/auth-session.js"></script>
+<script src="../assets/js/main-animations.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = getCurrentUser();
+    
+    // Protect Student Dashboard: Redirect guests to login
+    if (!user) {
+      alert('Please log in with your Student ID to access your dashboard.');
+      window.location.href = 'login.html?redirect=student-dashboard.html';
+      return;
+    }
+
+    if (user.role === 'admin') {
+      window.location.href = 'admin-dashboard.html';
+      return;
+    }
+
+    const stuId = user.studentId || 'STU101';
+    const stuName = user.name || stuId;
+
+    document.getElementById('headerStuName').innerText = `${stuName} (${stuId})`;
+    document.getElementById('displayStudentId').innerText = stuId;
+
+    loadStudentBorrows(stuId);
+  });
+
+  function loadStudentBorrows(stuId) {
+    let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');
+    
+    // Seed sample default book for new logins if empty
+    if (borrows.length === 0 && !localStorage.getItem('slms_seeded_' + stuId)) {
+      borrows = [
+        {
+          title: "The Wealth of Nations",
+          isbn: "978-0140432084",
+          issueDate: "18/09/2026",
+          dueDate: "02/10/2026",
+          status: "Issued"
+        }
+      ];
+      localStorage.setItem('slms_borrows_' + stuId, JSON.stringify(borrows));
+      localStorage.setItem('slms_seeded_' + stuId, 'true');
+    }
+
+    const tbody = document.getElementById('studentIssuedBody');
+    const noMsg = document.getElementById('noIssuedMsg');
+    tbody.innerHTML = '';
+
+    document.getElementById('statBorrowedCount').innerText = borrows.length;
+
+    if (borrows.length === 0) {
+      noMsg.style.display = 'block';
+      return;
+    }
+
+    noMsg.style.display = 'none';
+
+    borrows.forEach((b, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${b.title}</strong></td>
+        <td>${b.isbn || 'N/A'}</td>
+        <td>${b.issueDate}</td>
+        <td>${b.dueDate}</td>
+        <td><span class="status-badge status-issued">${b.status}</span></td>
+        <td>
+          <button class="btn-sm btn-dark" onclick="returnMyBook('${stuId}', ${index}, '${b.title}')">Return Book</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function returnMyBook(stuId, index, title) {
+    if (confirm(`Do you want to return "${title}" to the library?`)) {
+      let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');
+      borrows.splice(index, 1);
+      localStorage.setItem('slms_borrows_' + stuId, JSON.stringify(borrows));
+      alert(`Book "${title}" marked as returned!`);
+      loadStudentBorrows(stuId);
+    }
+  }
+</script>
+</body>
+</html>

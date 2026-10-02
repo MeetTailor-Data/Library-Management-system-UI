@@ -12,12 +12,12 @@
 <header class="main-header">
   <div class="container header-flex">
     <div class="logo">
-      <img src="/assets/images/logo.png" alt="The Library">
+      <img src="../assets/images/logo.png" alt="The Library">
     </div>
 
     <nav class="navbar">
       <ul>
-        <li><a href="index.html" >Home</a></li>
+        <li><a href="index.html">Home</a></li>
         <li><a href="aboutus.html">About Us</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="catalog.html" class="active">Catalog</a></li>
@@ -25,118 +25,298 @@
       </ul>
     </nav>
 
-    <a href="login.html" class="btn-primary">Sign Up</a>
+    <div id="navbarAuthArea">
+      <a href="login.html" class="btn-primary">Sign Up</a>
+    </div>
   </div>
 </header>
 
-  <div class="search-container">
-    <input type="text" id="search-input" placeholder="Search...">
-    <button type="submit" id="search-button">Search</button>
-  </div>
-  <br>
-  <div class="book-container">
-    <div class="book">
-      <img src="../assets/images/b9.jpg" alt="Book 1 Cover">
-      <h3>The Wealth of Nations</h3>
-      <p>Adam Smith</p>
-      <p>explores the principles of economics, advocating for free markets, the division of labor.</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b10.jpg" alt="Book 2 Cover">
-      <h3>The World as I See It</h3>
-      <p>Albert Einstein</p>
-      <p> Overall, the book serves as a platform for Einstein to share his insights, values, and vision for a more
-        enlightened and compassionate world.</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b1.jpg" alt="Book 1 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b2.jpg" alt="Book 2 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b3.jpg" alt="Book 1 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b4.jpg" alt="Book 2 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b5.jpg" alt="Book 1 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b6.jpg" alt="Book 2 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b7.jpg" alt="Book 1 Cover">
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
-    </div>
-    <div class="book">
-      <img src="../assets/images/b8.jpg" Book 2 Cover>
-      <h3>Book Title</h3>
-      <p>Author Name</p>
-      <p>Description of the book goes here...</p>
-      <button>View Details</button>
+<main class="page-content">
+  <div class="container">
+    <h2 style="margin-top: 30px; margin-bottom: 10px;">Library Book Catalog</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 25px;">Search, explore, and find books available in our collection</p>
+
+    <!-- Search & Filter Controls -->
+    <div class="search-container">
+      <div class="search-box-flex">
+        <input type="text" id="search-input" placeholder="Search by book title, author, or ISBN...">
+        <button type="button" id="search-button" onclick="filterBooks()">Search</button>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-filters">
+        <button class="filter-btn active" onclick="setCategory('All', this)">All</button>
+        <button class="filter-btn" onclick="setCategory('Economics', this)">Economics</button>
+        <button class="filter-btn" onclick="setCategory('Science', this)">Science</button>
+        <button class="filter-btn" onclick="setCategory('Technology', this)">Technology</button>
+        <button class="filter-btn" onclick="setCategory('Literature', this)">Literature</button>
+        <button class="filter-btn" onclick="setCategory('History', this)">History</button>
+      </div>
     </div>
 
+    <!-- Books Grid -->
+    <div class="book-container" id="bookGrid">
+      
+      <!-- Book 1 -->
+      <div class="book" data-title="The Wealth of Nations" data-author="Adam Smith" data-category="Economics" data-isbn="978-0140432084" data-status="Available" data-desc="A foundational work of classical economics exploring division of labor, productivity, and free markets.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b9.jpg" alt="The Wealth of Nations">
+        <span class="category-tag">Economics</span>
+        <h3>The Wealth of Nations</h3>
+        <p><strong>Author:</strong> Adam Smith</p>
+        <p>Explores the fundamental principles of economics and market division.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 2 -->
+      <div class="book" data-title="The World as I See It" data-author="Albert Einstein" data-category="Science" data-isbn="978-0806527901" data-status="Available" data-desc="Albert Einstein's personal reflections on physics, humanity, peace, and the universe.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b10.jpg" alt="The World as I See It">
+        <span class="category-tag">Science</span>
+        <h3>The World as I See It</h3>
+        <p><strong>Author:</strong> Albert Einstein</p>
+        <p>Einstein shares his insights, scientific views, and philosophy for humanity.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 3 -->
+      <div class="book" data-title="Computer Networks & Systems" data-author="Andrew S. Tanenbaum" data-category="Technology" data-isbn="978-0132126953" data-status="Available" data-desc="Complete guide to modern networking principles, architecture, and protocols.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b1.jpg" alt="Computer Networks">
+        <span class="category-tag">Technology</span>
+        <h3>Computer Networks</h3>
+        <p><strong>Author:</strong> Andrew S. Tanenbaum</p>
+        <p>Comprehensive guide to network protocols, routing, and modern architectures.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 4 -->
+      <div class="book" data-title="Clean Architecture & Code" data-author="Robert C. Martin" data-category="Technology" data-isbn="978-0134494166" data-status="Issued" data-desc="A craftsman's guide to software structure, design patterns, and clean programming principles.">
+        <span class="badge badge-issued">Currently Issued</span>
+        <img src="../assets/images/b2.jpg" alt="Clean Architecture">
+        <span class="category-tag">Technology</span>
+        <h3>Clean Architecture</h3>
+        <p><strong>Author:</strong> Robert C. Martin</p>
+        <p>Software design patterns, modularity, and principles of maintainable systems.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 5 -->
+      <div class="book" data-title="Brief History of Time" data-author="Stephen Hawking" data-category="Science" data-isbn="978-0553380163" data-status="Available" data-desc="An iconic exploration of space, black holes, time, and the origins of the cosmos.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b3.jpg" alt="Brief History of Time">
+        <span class="category-tag">Science</span>
+        <h3>Brief History of Time</h3>
+        <p><strong>Author:</strong> Stephen Hawking</p>
+        <p>A landmark journey into black holes, gravity, and the nature of the cosmos.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 6 -->
+      <div class="book" data-title="To Kill a Mockingbird" data-author="Harper Lee" data-category="Literature" data-isbn="978-0061120084" data-status="Available" data-desc="Classic literary masterpiece exploring justice, empathy, and integrity in American history.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b4.jpg" alt="To Kill a Mockingbird">
+        <span class="category-tag">Literature</span>
+        <h3>To Kill a Mockingbird</h3>
+        <p><strong>Author:</strong> Harper Lee</p>
+        <p>A profound story of justice, childhood, and compassion in deep American history.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 7 -->
+      <div class="book" data-title="Sapiens: A Brief History" data-author="Yuval Noah Harari" data-category="History" data-isbn="978-0062316097" data-status="Available" data-desc="How humankind evolved from primitive foragers to masters of Planet Earth.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b5.jpg" alt="Sapiens">
+        <span class="category-tag">History</span>
+        <h3>Sapiens: Brief History</h3>
+        <p><strong>Author:</strong> Yuval Noah Harari</p>
+        <p>Fascinating historical journey of human biology, civilization, and culture.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 8 -->
+      <div class="book" data-title="Principles of Economics" data-author="N. Gregory Mankiw" data-category="Economics" data-isbn="978-1305585126" data-status="Issued" data-desc="Standard textbook on micro and macroeconomic principles and fiscal policies.">
+        <span class="badge badge-issued">Currently Issued</span>
+        <img src="../assets/images/b6.jpg" alt="Principles of Economics">
+        <span class="category-tag">Economics</span>
+        <h3>Principles of Economics</h3>
+        <p><strong>Author:</strong> N. Gregory Mankiw</p>
+        <p>In-depth coverage of market behavior, trade, and economic decision making.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 9 -->
+      <div class="book" data-title="The Great Gatsby" data-author="F. Scott Fitzgerald" data-category="Literature" data-isbn="978-0743273565" data-status="Available" data-desc="A portrait of the Jazz Age, wealth, disillusionment, and the American dream.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b7.jpg" alt="The Great Gatsby">
+        <span class="category-tag">Literature</span>
+        <h3>The Great Gatsby</h3>
+        <p><strong>Author:</strong> F. Scott Fitzgerald</p>
+        <p>Timeless classic about obsession, wealth, and longing in the Roaring Twenties.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+      <!-- Book 10 -->
+      <div class="book" data-title="Ancient World Civilizations" data-author="Peter Heather" data-category="History" data-isbn="978-0195155846" data-status="Available" data-desc="Detailed study of early civilizations, empire building, and societal evolutions.">
+        <span class="badge badge-available">Available</span>
+        <img src="../assets/images/b8.jpg" alt="Ancient World Civilizations">
+        <span class="category-tag">History</span>
+        <h3>World Civilizations</h3>
+        <p><strong>Author:</strong> Peter Heather</p>
+        <p>Richly detailed survey of ancient dynasties, cultures, and global transformations.</p>
+        <button onclick="openBookModal(this)">View Details</button>
+      </div>
+
+    </div>
+
+    <div id="noResults" style="display: none; text-align: center; padding: 40px; color: #777;">
+      <h3>No books found matching your search.</h3>
+      <p>Try searching with another keyword or selecting a different category.</p>
+    </div>
   </div>
-    <br>
+</main>
+
+<!-- Book Details Modal -->
+<div class="modal-overlay" id="bookModal" onclick="if(event.target === this) closeBookModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeBookModal()">&times;</button>
+    <div class="modal-body">
+      <img id="modalImg" src="" alt="Book Cover">
+      <div class="modal-info">
+        <h3 id="modalTitle">Book Title</h3>
+        <p><strong>Author:</strong> <span id="modalAuthor">Author</span></p>
+        <p><strong>Category:</strong> <span id="modalCategory">Category</span></p>
+        <p><strong>ISBN:</strong> <span id="modalIsbn">ISBN</span></p>
+        <p><strong>Status:</strong> <span id="modalStatus" class="badge">Available</span></p>
+        <p id="modalDesc" style="margin-top: 10px; font-size: 13px; line-height: 1.5;">Book description goes here.</p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="filter-btn" onclick="closeBookModal()">Close</button>
+      <button class="btn-primary" id="modalBorrowBtn" style="font-size: 14px; padding: 8px 18px; border:none; cursor:pointer;" onclick="triggerBorrowFromModal()">Borrow Book</button>
+    </div>
+  </div>
+</div>
+
 <footer class="main-footer">
-    <div class="container footer-grid">
-      <div>
-        <h3>About Us</h3>
-        <p>A vibrant hub of knowledge and resources for learners and readers.</p>
-      </div>
-
-      <div>
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="aboutus.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="catalog.html">Catalog</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Contact</h3>
-        <p>Email: library@gmail.com</p>
-        <p>Phone: 1211271351</p>
-      </div>
+  <div class="container footer-grid">
+    <div>
+      <h3>About Us</h3>
+      <p>A vibrant hub of knowledge and resources for learners and readers.</p>
     </div>
 
-    <div class="footer-bottom">
-      <p>&copy; 2026 Library Management System</p>
+    <div>
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="aboutus.html">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="catalog.html">Catalog</a></li>
+        <li><a href="contect.html">Contact</a></li>
+      </ul>
     </div>
-  </footer>
+
+    <div>
+      <h3>Contact</h3>
+      <p>Email: library@gmail.com</p>
+      <p>Phone: 1211271351</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 Library Management System</p>
+  </div>
+</footer>
+
+<script src="../assets/js/auth-session.js"></script>
+<script src="../assets/js/main-animations.js"></script>
+<script>
+  let selectedCategory = 'All';
+  let activeModalBook = null;
+
+  function setCategory(category, element) {
+    selectedCategory = category;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    filterBooks();
+  }
+
+  function filterBooks() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    const books = document.querySelectorAll('.book-container .book');
+    let visibleCount = 0;
+
+    books.forEach(book => {
+      const title = (book.getAttribute('data-title') || '').toLowerCase();
+      const author = (book.getAttribute('data-author') || '').toLowerCase();
+      const isbn = (book.getAttribute('data-isbn') || '').toLowerCase();
+      const category = book.getAttribute('data-category') || '';
+
+      const matchesSearch = !query || title.includes(query) || author.includes(query) || isbn.includes(query);
+      const matchesCategory = (selectedCategory === 'All' || category === selectedCategory);
+
+      if (matchesSearch && matchesCategory) {
+        book.style.display = 'flex';
+        visibleCount++;
+      } else {
+        book.style.display = 'none';
+      }
+    });
+
+    document.getElementById('noResults').style.display = (visibleCount === 0) ? 'block' : 'none';
+  }
+
+  document.getElementById('search-input').addEventListener('keyup', filterBooks);
+
+  function openBookModal(btn) {
+    const card = btn.closest('.book');
+    const title = card.getAttribute('data-title');
+    const author = card.getAttribute('data-author');
+    const category = card.getAttribute('data-category');
+    const isbn = card.getAttribute('data-isbn');
+    const status = card.getAttribute('data-status');
+    const desc = card.getAttribute('data-desc');
+    const imgSrc = card.querySelector('img').src;
+
+    activeModalBook = { title, author, category, isbn, status };
+
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalAuthor').innerText = author;
+    document.getElementById('modalCategory').innerText = category;
+    document.getElementById('modalIsbn').innerText = isbn;
+    document.getElementById('modalDesc').innerText = desc;
+    document.getElementById('modalImg').src = imgSrc;
+
+    const statusBadge = document.getElementById('modalStatus');
+    statusBadge.innerText = status;
+    statusBadge.className = 'badge ' + (status === 'Available' ? 'badge-available' : 'badge-issued');
+
+    const borrowBtn = document.getElementById('modalBorrowBtn');
+    const user = getCurrentUser();
+
+    if (status === 'Available') {
+      borrowBtn.style.display = 'inline-block';
+      if (user) {
+        borrowBtn.innerText = `Issue for ${user.studentId || user.name}`;
+      } else {
+        borrowBtn.innerText = 'Login to Issue Book';
+      }
+    } else {
+      borrowBtn.style.display = 'none';
+    }
+
+    document.getElementById('bookModal').classList.add('active');
+  }
+
+  function triggerBorrowFromModal() {
+    if (!activeModalBook) return;
+    attemptBorrowBook(activeModalBook.title, activeModalBook.isbn);
+  }
+
+  function closeBookModal() {
+    document.getElementById('bookModal').classList.remove('active');
+  }
+</script>
 
 </body>
 

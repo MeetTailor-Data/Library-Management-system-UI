@@ -14,18 +14,20 @@
     }
 
     body {
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       background: linear-gradient(135deg, #ff9a00, #ffd000);
+      padding: 20px 10px;
     }
 
     .container {
       width: 380px;
+      max-width: 95%;
       background: #fff;
       border-radius: 15px;
-      padding: 30px;
+      padding: 30px 20px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
     }
 
@@ -116,51 +118,73 @@
     <h2>Library Management System</h2>
 
     <div class="tabs">
-      <button id="loginTab" class="active" onclick="showLogin()">Login</button>
-      <button id="signupTab" onclick="showSignup()">Signup</button>
+      <button type="button" id="loginTab" class="active" onclick="showLogin()">Login</button>
+      <button type="button" id="signupTab" onclick="showSignup()">Signup</button>
     </div>
 
+    <!-- Alert Box for feedback -->
+    <div id="alertBox" style="display: none; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; text-align: center;"></div>
+
     <!-- Login Form -->
-    <form id="loginForm" class="active">
+    <form id="loginForm" class="active" action="../backend/auth.php" method="POST" onsubmit="return handleLogin(event)">
+      <input type="hidden" name="action" value="login">
       <div class="input-box">
-        <input type="text" placeholder="Student ID / Admin ID" required />
+        <input type="text" name="user_id" id="loginUserId" placeholder="Student ID / Admin ID (e.g. STU101 or ADMIN01)" required />
       </div>
       <div class="input-box">
-        <input type="password" placeholder="Password" required />
+        <input type="password" name="password" id="loginPassword" placeholder="Password" required />
       </div>
-      <button class="btn">Login</button>
-      <button class="btn guest" onclick="goHome()" type="button">Continue as Guest</button>
+      <button type="submit" class="btn">Login</button>
+      <button type="button" class="btn guest" onclick="goHome()">Continue as Guest</button>
     </form>
 
     <!-- Signup Form -->
-    <form id="signupForm">
+    <form id="signupForm" action="../backend/auth.php" method="POST" onsubmit="return handleSignup(event)">
+      <input type="hidden" name="action" value="signup">
       <div class="input-box">
-        <input type="text" placeholder="Full Name" required />
+        <input type="text" name="full_name" id="signupName" placeholder="Full Name" required />
       </div>
       <div class="input-box">
-        <input type="text" placeholder="Student ID" required />
+        <input type="text" name="student_id" id="signupId" placeholder="Student ID (e.g. STU105)" required />
       </div>
       <div class="input-box">
-        <input type="email" placeholder="Email" required />
+        <input type="email" name="email" id="signupEmail" placeholder="Email Address" required />
       </div>
       <div class="input-box">
-        <input type="password" placeholder="Password" required />
+        <input type="password" name="password" id="signupPass" placeholder="Password" required />
       </div>
       <div class="input-box">
-        <input type="password" placeholder="Confirm Password" required />
+        <input type="password" name="confirm_password" id="signupConfirmPass" placeholder="Confirm Password" required />
       </div>
-      <button class="btn">Create Account</button>
+      <button type="submit" class="btn">Create Account</button>
     </form>
 
-    <div class="footer-text">© 2026 Library Management System</div>
+    <div class="footer-text">
+      <a href="index.html" style="color: #ff6a00; text-decoration: none; font-weight: 500;">&larr; Back to Home</a>
+      <div style="margin-top: 8px;">© 2026 Library Management System</div>
+    </div>
   </div>
 
+  <script src="../assets/js/auth-session.js"></script>
   <script>
+    // If user is already logged in, redirect them directly to their dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+      const existingUser = getCurrentUser();
+      if (existingUser) {
+        if (existingUser.role === 'admin') {
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          window.location.href = 'student-dashboard.html';
+        }
+      }
+    });
+
     function showLogin() {
       document.getElementById('loginForm').classList.add('active');
       document.getElementById('signupForm').classList.remove('active');
       document.getElementById('loginTab').classList.add('active');
       document.getElementById('signupTab').classList.remove('active');
+      hideAlert();
     }
 
     function showSignup() {
@@ -168,6 +192,85 @@
       document.getElementById('loginForm').classList.remove('active');
       document.getElementById('signupTab').classList.add('active');
       document.getElementById('loginTab').classList.remove('active');
+      hideAlert();
+    }
+
+    function showAlert(msg, isError) {
+      const box = document.getElementById('alertBox');
+      box.style.display = 'block';
+      box.innerText = msg;
+      box.style.background = isError ? '#ffebee' : '#e8f5e9';
+      box.style.color = isError ? '#c62828' : '#2e7d32';
+      box.style.border = isError ? '1px solid #ef9a9a' : '1px solid #a5d6a7';
+    }
+
+    function hideAlert() {
+      document.getElementById('alertBox').style.display = 'none';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('loginUserId').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      
+      if (!id || !pass) {
+        showAlert('Please enter your ID and password.', true);
+        return false;
+      }
+
+      // Check if Admin login (e.g., ADMIN01, admin, librarian)
+      if (id.toUpperCase().includes('ADMIN') || id.toLowerCase() === 'librarian') {
+        const adminUser = {
+          role: 'admin',
+          studentId: id.toUpperCase(),
+          name: 'Library Admin'
+        };
+        setCurrentUser(adminUser);
+        alert('Welcome Admin! Redirecting to Admin Dashboard...');
+        window.location.href = 'admin-dashboard.html';
+        return false;
+      }
+
+      // Regular Student login
+      const studentUser = {
+        role: 'student',
+        studentId: id.toUpperCase(),
+        name: 'Student ' + id.toUpperCase()
+      };
+      setCurrentUser(studentUser);
+      alert(`Login Successful!\nLogged in as Student ID: ${id.toUpperCase()}`);
+
+      // Check URL redirect param
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectPage = urlParams.get('redirect') || 'student-dashboard.html';
+      window.location.href = redirectPage;
+      return false;
+    }
+
+    function handleSignup(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('signupName').value.trim();
+      const stuId = document.getElementById('signupId').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPass').value;
+      const confirmPass = document.getElementById('signupConfirmPass').value;
+
+      if (pass !== confirmPass) {
+        showAlert('Passwords do not match. Please try again.', true);
+        return false;
+      }
+
+      const newStudent = {
+        role: 'student',
+        studentId: stuId.toUpperCase(),
+        name: fullName,
+        email: email
+      };
+
+      setCurrentUser(newStudent);
+      alert(`Account Created Successfully!\nYour assigned Student ID is: ${stuId.toUpperCase()}`);
+      window.location.href = 'student-dashboard.html';
+      return false;
     }
 
     function goHome() {

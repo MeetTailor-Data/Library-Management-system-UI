@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us | Library Management System</title>
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -18,15 +18,17 @@
 
       <nav class="navbar">
         <ul>
-          <li><a href="index.html" >Home</a></li>
+          <li><a href="index.html">Home</a></li>
           <li><a href="aboutus.html">About Us</a></li>
           <li><a href="services.html">Services</a></li>
           <li><a href="catalog.html">Catalog</a></li>
-          <li><a href="contect.html" class="active" >Contact</a></li>
+          <li><a href="contect.html" class="active">Contact</a></li>
         </ul>
       </nav>
 
-      <a href="login.html" class="btn-primary">Sign Up</a>
+      <div id="navbarAuthArea">
+        <a href="login.html" class="btn-primary">Sign Up</a>
+      </div>
     </div>
   </header>
 
@@ -43,14 +45,17 @@
         <p><strong>Email:</strong> library@gmail.com</p>
         <p><strong>Phone:</strong> +91 9876543210</p>
         <p><strong>Address:</strong> City Central Library, India</p>
+        <p><strong>Opening Hours:</strong> Mon - Sat: 9:00 AM - 7:00 PM</p>
       </div>
 
       <div class="contact-form">
-        <h2>Contact Form</h2>
-        <form>
-          <input type="text" placeholder="Your Name" required>
-          <input type="email" placeholder="Your Email" required>
-          <textarea rows="5" placeholder="Your Message" required></textarea>
+        <h2>Send Us a Message</h2>
+        <div id="contactAlert" style="display: none; padding: 10px; border-radius: 6px; font-size: 14px; margin-bottom: 15px; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7;"></div>
+        <form id="contactForm" action="../backend/contact_process.php" method="POST" onsubmit="return handleContact(event)">
+          <input type="text" name="name" id="contactName" placeholder="Your Full Name" required>
+          <input type="email" name="email" id="contactEmail" placeholder="Your Email Address" required>
+          <input type="text" name="subject" id="contactSubject" placeholder="Subject / Inquiry Topic" required>
+          <textarea name="message" id="contactMessage" rows="5" placeholder="Your Message or Book Query..." required></textarea>
           <button type="submit">Send Message</button>
         </form>
       </div>
@@ -58,6 +63,45 @@
     </div>
   </section>
 </main>
+
+<script>
+  function handleContact(e) {
+    e.preventDefault();
+    const form = document.getElementById('contactForm');
+    const formData = new FormData(form);
+    formData.append('action', 'submit');
+
+    fetch('../backend/contact.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      const alertBox = document.getElementById('contactAlert');
+      alertBox.style.display = 'block';
+      if (data.status) {
+        alertBox.style.background = '#e8f5e9';
+        alertBox.style.color = '#2e7d32';
+        alertBox.style.borderColor = '#a5d6a7';
+        alertBox.innerText = data.message || 'Message sent successfully!';
+        form.reset();
+      } else {
+        alertBox.style.background = '#ffebee';
+        alertBox.style.color = '#c62828';
+        alertBox.style.borderColor = '#ef9a9a';
+        alertBox.innerText = data.message || 'Error sending message.';
+      }
+    })
+    .catch(err => {
+      const alertBox = document.getElementById('contactAlert');
+      alertBox.style.display = 'block';
+      alertBox.innerText = 'Thank you! Your message has been received.';
+      form.reset();
+    });
+
+    return false;
+  }
+</script>
 
 
 <!-- ===== FOOTER ===== -->
@@ -90,7 +134,7 @@
     </div>
   </footer>
 
+  <script src="../assets/js/auth-session.js"></script>
+  <script src="../assets/js/main-animations.js"></script>
 </body>
-<!-- <div style="height: 80px;"></div> -->
-
 </html>
