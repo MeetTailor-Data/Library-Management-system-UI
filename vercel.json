@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/Pages/index.html"
+    },
+    {
+      "src": "^/Pages/(.*)$",
+      "dest": "/Pages/$1"
+    },
+    {
+      "src": "^/assets/(.*)$",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Pages/$1"
+    }
+  ]
+}

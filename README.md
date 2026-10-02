@@ -1,99 +1,126 @@
-##  Library Management System UI
+# Smart Library Management System (SLMS)
 
-### Project Description
-
-The **Library Management System UI** is a front-end web project designed to showcase the user interface of a library system. This project focuses purely on design, layout, and user experience using standard web technologies.
-
-It includes multiple pages such as Home, About Us, Services, Catalog, Blog, and Login/Signup. There is no backend or database integration in this project.
+A modern, responsive, and lightweight **Smart Library Management System** built with **HTML5, CSS3, JavaScript, and PHP 8.x** utilizing a **JSON-based Flat-File Data Management Engine** (Zero external database dependency).
 
 ---
 
-###  Aim
+## 📌 Project Overview
 
-To design and develop a clean, responsive, and user-friendly **Library Management System User Interface** using HTML, CSS, and basic JavaScript.
-
----
-
-###  Technologies Used
-
-* HTML5
-* CSS3
-* JavaScript (for basic interactions)
+The **Smart Library Management System (SLMS)** automates book cataloging, member authentication, borrowing circulation, and penalty tracking. It provides public visitors with an interactive catalog while enforcing mandatory student authentication for book borrowing and offering librarians a dedicated management control panel.
 
 ---
 
-###  Project Structure
+## 🧠 Why is it "Smart"? (Key Highlights)
+
+1. **⏱️ Automated Due Date & Fine Calculation Engine:**  
+   Automatically assigns a **14-day return due date** on every book issue. Computes late penalty fines dynamically (**₹5 per day overdue**) if returned after the due date.
+2. **📦 Real-time Dynamic Stock Control:**  
+   Automatically decrements available book copies on issue and increments them upon return. Prevents checkouts when stock reaches zero.
+3. **🛡️ Smart Borrow Limits & Prevention:**  
+   Enforces a **maximum borrow limit of 3 books** per student and prevents duplicate checkout of the same title.
+4. **👥 Role-Based Access Control (RBAC):**  
+   Intelligent single-portal authentication that auto-routes **Admins** to the management dashboard and **Students** to their personal portal.
+5. **🔍 Instant Live Catalog Search & Category Filter (OPAC):**  
+   Search books in real time by title, author, or ISBN, with one-click category filtering and availability status badges.
+
+---
+
+## 🛠️ Technology Stack
+
+* **Frontend:** HTML5, Vanilla CSS3 (Custom Design System), JavaScript (ES6+)
+* **Backend:** PHP 8.x
+* **Data Storage / Engine:** JSON-based Flat-File Database (`data/*.json`)
+* **Responsive Framework:** Mobile-first architecture with animated 3-line hamburger navigation
+
+---
+
+## 📂 Project Structure
 
 ```
-Library-Management-System-UI/
+Library-Management-System/
+├── index.php                   # Root Entry Point & Auto-router
+├── vercel.json                 # Vercel Deployment & Route Configuration
+├── README.md                   # Project Documentation
 │
-├── pages/
-│   ├── index.html
-│   ├── aboutus.html
-│   ├── services.html
-│   ├── catalog.html
-│   ├── login-signup.html
+├── Pages/                      # Web Application Pages
+│   ├── index.html              # Landing / Home Page
+│   ├── catalog.html            # Dynamic Book Catalog (OPAC) with Live Search & Filter
+│   ├── login.html              # Role-Based Login & Student Registration (Signup)
+│   ├── student-dashboard.html  # Student Portal (My Borrows, Due Dates & History)
+│   ├── admin-dashboard.html    # Librarian Management Panel (Inventory, Circulation, Users)
+│   ├── aboutus.html            # About Library & Mission
+│   ├── services.html           # Services & Interactive FAQ Accordion
+│   ├── contect.html            # Contact & Inquiry Form
+│   ├── blog.html               # Library Blog Feed
+│   └── blog-post1.html         # Blog Article View
 │
-├── assets/
-│   ├── css/
-│   │   ├── style.css
-│   ├── images/
-│   │   ├── logo.png
-|   |  (PUT YOUR IMAGES)
-└── README.md
+├── backend/                    # Pure PHP 8.x Backend Engine & Controllers
+│   ├── db.php                  # Core JSON Helper & Automated Fine Calculator
+│   ├── auth.php                # Authentication, Registration & Session Controller
+│   ├── books.php               # Book Inventory CRUD & Catalog Controller
+│   ├── circulation.php         # Issue/Return Engine, Limits & Stock Sync
+│   └── contact.php             # Contact Inquiries Handler
+│
+├── data/                       # JSON Flat-File Data Store
+│   ├── users.json              # Student & Admin Credentials
+│   ├── books.json              # Catalog Inventory & Live Stock Counts
+│   ├── issued_books.json       # Circulation Records & Due Dates
+│   └── messages.json           # Inquiries & Contact Messages
+│
+└── assets/
+    ├── css/
+    │   ├── style.css           # Global Theme, Layout & Mobile Media Queries
+    │   └── style2.css          # Supplementary Styles
+    ├── js/
+    │   ├── auth-session.js     # Session Management & Dynamic Navbar
+    │   └── main-animations.js  # Scroll Reveal, Counter & Accordion Animations
+    └── images/                 # Book Covers, Logos & Media Assets
 ```
 
 ---
 
-###  Features
+## 🔑 Default Login Credentials
 
-* Responsive navigation bar
-* Multiple UI pages (Home, About, Services, Catalog, etc.)
-* Login & Signup user interface page
-* Book catalog layout with cards
-* Search bar UI
-* Footer with quick links and contact information
-* Clean and structured CSS styling
-* Reusable and centralized CSS file
-* Separate pages for better organization
+| Role | User / Student ID | Password | Access / Permissions |
+|---|---|---|---|
+| **Librarian (Admin)** | `ADMIN01` *(or `admin`)* | `admin123` | Full Inventory CRUD, Issue & Return, Student List, Inquiries |
+| **Demo Student 1** | `STU101` | `student123` | Borrow Books, Active Due Date Tracking, History |
+| **Demo Student 2** | `STU102` | `student123` | Overdue Fine Tracking & History |
+| **New Student** | *Custom Student ID* | *Custom Pass* | Register via the **Signup** tab on `login.html` |
 
 ---
 
-###  How to Run the Project
+## 🚀 How to Run Locally
 
-1. Download or clone the repository
-2. Open the project folder
-3. Open `index.html` in any modern web browser
-4. Navigate through the pages using the navigation bar
-
----
-
-###  Notes
-
-* This is a **frontend-only project**
-* No database or backend functionality is included
-* Suitable for learning, practice, and UI demonstration purposes
-
-## Images Note
-
-All images used in this project are **demo images only**.  
-You are free to replace them with:
-
-* Your own images
-* Condition-based images
-* Project-specific assets as per your requirements
+### Using PHP Built-in Server (Recommended - No XAMPP needed)
+1. Open your terminal in the project root directory:
+   ```bash
+   php -S localhost:8000
+   ```
+2. Open your browser and navigate to:
+   ```
+   http://localhost:8000
+   ```
 
 ---
 
-###  Author
+## ☁️ Deploying on Vercel
 
-**Meet Tailor**
+1. Push your repository to **GitHub**.
+2. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
+3. Import your `Library-Management-system-UI` repository.
+4. Keep the default settings and click **Deploy**.
+5. The included `vercel.json` automatically routes root traffic to `Pages/index.html`.
 
 ---
 
-###  License
+## 👤 Author
 
-This project is created for educational purposes. You are free to use and modify it for learning and personal projects.
+**Meet Tailor**  
+*GitHub:* [@MeetTailor-Data](https://github.com/MeetTailor-Data)
 
+---
 
-Last Updated:2026
+## 📄 License
+
+This project is open-source and created for academic, educational, and development demonstration purposes.
