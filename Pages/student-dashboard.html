@@ -153,7 +153,7 @@
 <script src="../assets/js/auth-session.js"></script>
 <script src="../assets/js/main-animations.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initStudentDashboard() {
     const user = getCurrentUser();
     
     // Protect Student Dashboard: Redirect guests to login
@@ -171,11 +171,23 @@
     const stuId = user.studentId || 'STU101';
     const stuName = user.name || stuId;
 
-    document.getElementById('headerStuName').innerText = `${stuName} (${stuId})`;
-    document.getElementById('displayStudentId').innerText = stuId;
+    const headerStuName = document.getElementById('headerStuName');
+    if (headerStuName) {
+      headerStuName.innerText = `${stuName} (${stuId})`;
+    }
+    const displayStudentId = document.getElementById('displayStudentId');
+    if (displayStudentId) {
+      displayStudentId.innerText = stuId;
+    }
 
     loadStudentBorrows(stuId);
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStudentDashboard);
+  } else {
+    initStudentDashboard();
+  }
 
   function loadStudentBorrows(stuId) {
     let borrows = JSON.parse(localStorage.getItem('slms_borrows_' + stuId) || '[]');

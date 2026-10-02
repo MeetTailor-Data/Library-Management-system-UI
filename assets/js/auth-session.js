@@ -42,12 +42,16 @@ function updateNavbarAuth() {
       if (user.role === 'admin') {
         const onAdminPage = window.location.pathname.includes('admin-dashboard.html');
         authContainer.innerHTML = `
+          <span style="font-size: 14px; margin-right: 12px; color: #555;">Logged in: <strong>Librarian (Admin)</strong></span>
           ${!onAdminPage ? '<a href="admin-dashboard.html" class="btn-secondary" style="padding: 7px 14px; font-size: 13px; margin-right: 6px;">Admin Panel</a>' : ''}
           <button onclick="logoutUser()" class="btn-primary" style="padding: 7px 14px; font-size: 13px; border:none; cursor:pointer;">Logout</button>
         `;
       } else {
         const onStudentPage = window.location.pathname.includes('student-dashboard.html');
+        const stuName = user.name || user.studentId || 'Student';
+        const stuId = user.studentId || 'STU101';
         authContainer.innerHTML = `
+          <span style="font-size: 14px; margin-right: 12px; color: #555;">Welcome, <strong id="headerStuName">${stuName} (${stuId})</strong></span>
           ${!onStudentPage ? '<a href="student-dashboard.html" class="btn-secondary" style="padding: 7px 14px; font-size: 13px; margin-right: 6px;">My Dashboard</a>' : ''}
           <button onclick="logoutUser()" class="btn-primary" style="padding: 7px 14px; font-size: 13px; border:none; cursor:pointer;">Logout</button>
         `;
