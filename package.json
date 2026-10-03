@@ -1,0 +1,21 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "A modern, responsive, and lightweight **Smart Library Management System** built with **HTML5, CSS3, JavaScript, and PHP 8.x** utilizing a **JSON-based Flat-File Data Management Engine** (Zero external database dependency).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeetTailor-Data/Library-Management-system-UI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MeetTailor-Data/Library-Management-system-UI/issues"
+  },
+  "homepage": "https://github.com/MeetTailor-Data/Library-Management-system-UI#readme"
+}

@@ -21,7 +21,20 @@ function initScrollAnimations() {
 
   if (!revealElements.length) return;
 
-  revealElements.forEach(el => el.classList.add('reveal-on-scroll'));
+  const windowHeight = window.innerHeight;
+  const unrevealed = [];
+
+  revealElements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < windowHeight + 80) {
+      el.classList.add('revealed');
+    } else {
+      el.classList.add('reveal-on-scroll');
+      unrevealed.push(el);
+    }
+  });
+
+  if (!unrevealed.length) return;
 
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
@@ -30,9 +43,9 @@ function initScrollAnimations() {
         obs.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.05, rootMargin: '0px 0px 60px 0px' });
 
-  revealElements.forEach(el => observer.observe(el));
+  unrevealed.forEach(el => observer.observe(el));
 }
 
 /* =====================================================
