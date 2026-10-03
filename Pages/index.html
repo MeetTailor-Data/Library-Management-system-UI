@@ -87,22 +87,15 @@
   <!-- ================= CATALOG PREVIEW ================= -->
   <section class="home-catalog">
     <div class="container">
-      <h2>Library Catalog</h2>
+      <h2>Featured Library Catalog</h2>
+      <p style="text-align: center; color: #666; margin-top: -25px; margin-bottom: 35px;">Real-time inventory and book availability in our collection</p>
 
-      <div class="catalog-grid">
-        <div class="catalog-card">
-          <img src="../assets/images/book1.jpg" alt="Book">
-          <h3>The Wisdom</h3>
-          <p>Author: Lade Nosman</p>
-          <a href="catalog.html" class="btn-primary" style="display:inline-block; margin-top: 10px;">View in Catalog</a>
-        </div>
+      <div class="catalog-grid" id="homeCatalogGrid">
+        <!-- Dynamically rendered from SLMS_STORE -->
+      </div>
 
-        <div class="catalog-card">
-          <img src="../assets/images/book2.jpg" alt="Book">
-          <h3>The Pamor</h3>
-          <p>Author: Lade Nosman</p>
-          <a href="catalog.html" class="btn-primary" style="display:inline-block; margin-top: 10px;">View in Catalog</a>
-        </div>
+      <div style="text-align: center; margin-top: 35px;">
+        <a href="catalog.html" class="btn-primary" style="display:inline-block; font-size: 15px; padding: 12px 28px;">Explore Full Catalog &rarr;</a>
       </div>
     </div>
   </section>
@@ -141,5 +134,37 @@
   <script src="../assets/js/slms-store.js"></script>
   <script src="../assets/js/auth-session.js"></script>
   <script src="../assets/js/main-animations.js"></script>
+  <script>
+    function renderHomeCatalog() {
+      if (!window.SLMS_STORE) return;
+      const books = window.SLMS_STORE.getBooks().slice(0, 4);
+      const grid = document.getElementById('homeCatalogGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      books.forEach(b => {
+        const isAvailable = (b.availableCopies > 0);
+        const badgeClass = isAvailable ? 'badge-available' : 'badge-issued';
+        const badgeText = isAvailable ? `Available (${b.availableCopies} left)` : 'Currently Issued (0 left)';
+
+        const card = document.createElement('div');
+        card.className = 'catalog-card';
+        card.innerHTML = `
+          <div>
+            <span class="badge ${badgeClass}">${badgeText}</span>
+            <img src="${b.image || '../assets/images/b1.jpg'}" alt="${b.title}">
+            <span class="category-tag" style="font-size: 12px; color: #ff5722; font-weight: bold; display: block; margin-bottom: 4px;">${b.category}</span>
+            <h3 style="margin: 5px 0 6px; font-size: 17px;">${b.title}</h3>
+            <p style="font-size: 13px; color: #666; margin: 0 0 10px;"><strong>Author:</strong> ${b.author}</p>
+          </div>
+          <a href="catalog.html" class="btn-primary" style="display:inline-block; margin-top: 10px; font-size: 13px; padding: 8px 16px;">View in Catalog</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    window.addEventListener('slms_data_changed', renderHomeCatalog);
+    document.addEventListener('DOMContentLoaded', renderHomeCatalog);
+  </script>
 </body>
 </html>
