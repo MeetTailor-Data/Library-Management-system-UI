@@ -275,9 +275,29 @@
     if (!localStorage.getItem(STORAGE_KEYS.BOOKS)) {
       localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_USERS));
+    
+    // Ensure all default users exist and real student names are populated
+    let users = getRaw(STORAGE_KEYS.USERS, []);
+    if (!users || users.length === 0) {
+      users = DEFAULT_USERS;
+    } else {
+      DEFAULT_USERS.forEach(defUser => {
+        const idx = users.findIndex(u => (u.studentId && u.studentId.toUpperCase() === defUser.studentId.toUpperCase()) || (u.id === defUser.id));
+        if (idx === -1) {
+          users.push(defUser);
+        } else {
+          // If name was stored as placeholder (e.g. "Student STU105" or equals ID), sync to authentic name
+          if (!users[idx].name || users[idx].name.toLowerCase().startsWith('student stu') || users[idx].name.toUpperCase() === defUser.studentId.toUpperCase()) {
+            users[idx].name = defUser.name;
+          }
+          if (!users[idx].password) {
+            users[idx].password = defUser.password;
+          }
+        }
+      });
     }
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+
     if (!localStorage.getItem(STORAGE_KEYS.CIRCULATIONS)) {
       localStorage.setItem(STORAGE_KEYS.CIRCULATIONS, JSON.stringify(DEFAULT_CIRCULATIONS));
     }

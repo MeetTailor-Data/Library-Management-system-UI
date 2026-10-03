@@ -8,7 +8,20 @@ function getCurrentUser() {
   const userJson = localStorage.getItem('slms_user');
   if (userJson) {
     try {
-      return JSON.parse(userJson);
+      let user = JSON.parse(userJson);
+      // Auto-heal placeholder names using store if available
+      if (user && user.role === 'student' && user.studentId) {
+        if (!user.name || user.name.toLowerCase().startsWith('student stu') || user.name.toUpperCase() === user.studentId.toUpperCase()) {
+          if (window.SLMS_STORE) {
+            const stu = window.SLMS_STORE.getStudentById(user.studentId);
+            if (stu && stu.name && !stu.name.toLowerCase().startsWith('student stu')) {
+              user.name = stu.name;
+              localStorage.setItem('slms_user', JSON.stringify(user));
+            }
+          }
+        }
+      }
+      return user;
     } catch (e) {
       return null;
     }
@@ -48,10 +61,29 @@ function updateNavbarAuth() {
         `;
       } else {
         const onStudentPage = window.location.pathname.includes('student-dashboard.html');
-        const stuName = user.name || user.studentId || 'Student';
+        let stuName = user.name || '';
         const stuId = user.studentId || 'STU101';
+
+        // Check if store has the full real name
+        if ((!stuName || stuName.toLowerCase().startsWith('student stu') || stuName.toUpperCase() === stuId.toUpperCase()) && window.SLMS_STORE) {
+          const rec = window.SLMS_STORE.getStudentById(stuId);
+          if (rec && rec.name && !rec.name.toLowerCase().startsWith('student stu')) {
+            stuName = rec.name;
+            user.name = stuName;
+            setCurrentUser(user);
+          }
+        }
+
+        // Format clean header greeting (e.g., "Meet Tailor (STU105)" or "STU105")
+        let displayGreeting = '';
+        if (stuName && stuName.toUpperCase() !== stuId.toUpperCase() && !stuName.toLowerCase().startsWith('student stu')) {
+          displayGreeting = `${stuName} (${stuId})`;
+        } else {
+          displayGreeting = `${stuId}`;
+        }
+
         authContainer.innerHTML = `
-          <span style="font-size: 14px; margin-right: 12px; color: #555;">Welcome, <strong id="headerStuName">${stuName} (${stuId})</strong></span>
+          <span style="font-size: 14px; margin-right: 12px; color: #555;">Welcome, <strong id="headerStuName">${displayGreeting}</strong></span>
           ${!onStudentPage ? '<a href="student-dashboard.html" class="btn-secondary" style="padding: 7px 14px; font-size: 13px; margin-right: 6px;">My Dashboard</a>' : ''}
           <button onclick="logoutUser()" class="btn-primary" style="padding: 7px 14px; font-size: 13px; border:none; cursor:pointer;">Logout</button>
         `;

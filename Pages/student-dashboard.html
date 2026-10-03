@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard | Smart Library</title>
-  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -163,11 +163,26 @@
     }
 
     currentStudentId = user.studentId || 'STU101';
-    const stuName = user.name || currentStudentId;
+    let stuName = user.name || '';
+    if ((!stuName || stuName.toLowerCase().startsWith('student stu') || stuName.toUpperCase() === currentStudentId.toUpperCase()) && window.SLMS_STORE) {
+      const rec = window.SLMS_STORE.getStudentById(currentStudentId);
+      if (rec && rec.name && !rec.name.toLowerCase().startsWith('student stu')) {
+        stuName = rec.name;
+        user.name = stuName;
+        setCurrentUser(user);
+      }
+    }
+
+    let displayGreeting = '';
+    if (stuName && stuName.toUpperCase() !== currentStudentId.toUpperCase() && !stuName.toLowerCase().startsWith('student stu')) {
+      displayGreeting = `${stuName} (${currentStudentId})`;
+    } else {
+      displayGreeting = `${currentStudentId}`;
+    }
 
     const headerStuName = document.getElementById('headerStuName');
     if (headerStuName) {
-      headerStuName.innerText = `${stuName} (${currentStudentId})`;
+      headerStuName.innerText = displayGreeting;
     }
     const displayStudentId = document.getElementById('displayStudentId');
     if (displayStudentId) {

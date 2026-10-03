@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Library Management | Login & Signup</title>
-  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -235,7 +235,16 @@
 
       // Regular Student login
       const stuRecord = window.SLMS_STORE ? window.SLMS_STORE.getStudentById(id) : null;
-      const stuName = stuRecord ? stuRecord.name : ('Student ' + id.toUpperCase());
+      let stuName = (stuRecord && stuRecord.name && !stuRecord.name.toLowerCase().startsWith('student stu')) ? stuRecord.name : '';
+      
+      if (!stuName) {
+        if (id.toUpperCase() === 'STU105') stuName = 'Meet Tailor';
+        else if (id.toUpperCase() === 'STU101') stuName = 'John Doe';
+        else if (id.toUpperCase() === 'STU102') stuName = 'Emily Clark';
+        else if (id.toUpperCase() === 'STU103') stuName = 'David Miller';
+        else if (id.toUpperCase() === 'STU104') stuName = 'Ananya Verma';
+        else stuName = 'Student';
+      }
 
       // If not yet in store, register seamlessly
       if (!stuRecord && window.SLMS_STORE) {
@@ -243,7 +252,7 @@
           studentId: id.toUpperCase(),
           name: stuName,
           email: `${id.toLowerCase()}@library.edu`,
-          department: 'General',
+          department: 'Computer Science',
           year: '1st Year'
         });
       }
@@ -254,7 +263,7 @@
         name: stuName
       };
       setCurrentUser(studentUser);
-      alert(`Login Successful!\nLogged in as Student ID: ${id.toUpperCase()} (${stuName})`);
+      alert(`Login Successful!\nWelcome back, ${stuName} (${id.toUpperCase()})`);
 
       // Check URL redirect param
       const urlParams = new URLSearchParams(window.location.search);
