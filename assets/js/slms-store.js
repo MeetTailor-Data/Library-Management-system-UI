@@ -245,6 +245,66 @@
       returnDate: "14/08/2026",
       status: "Returned",
       fine: 0
+    },
+    {
+      id: 4,
+      studentId: "STU105",
+      studentName: "Meet Tailor",
+      bookTitle: "The Wealth of Nations",
+      isbn: "978-0140432084",
+      issueDate: "10/08/2026",
+      dueDate: "24/08/2026",
+      returnDate: "22/08/2026",
+      status: "Returned",
+      fine: 0
+    },
+    {
+      id: 5,
+      studentId: "STU105",
+      studentName: "Meet Tailor",
+      bookTitle: "Clean Architecture & Code",
+      isbn: "978-0134494166",
+      issueDate: "15/08/2026",
+      dueDate: "29/08/2026",
+      returnDate: "28/08/2026",
+      status: "Returned",
+      fine: 0
+    },
+    {
+      id: 6,
+      studentId: "STU105",
+      studentName: "Meet Tailor",
+      bookTitle: "Brief History of Time",
+      isbn: "978-0553380163",
+      issueDate: "01/09/2026",
+      dueDate: "15/09/2026",
+      returnDate: "14/09/2026",
+      status: "Returned",
+      fine: 0
+    },
+    {
+      id: 7,
+      studentId: "STU105",
+      studentName: "Meet Tailor",
+      bookTitle: "To Kill a Mockingbird",
+      isbn: "978-0061120084",
+      issueDate: "05/09/2026",
+      dueDate: "19/09/2026",
+      returnDate: "18/09/2026",
+      status: "Returned",
+      fine: 0
+    },
+    {
+      id: 8,
+      studentId: "STU105",
+      studentName: "Meet Tailor",
+      bookTitle: "Artificial Intelligence: A Modern Approach",
+      isbn: "978-0136042594",
+      issueDate: "12/09/2026",
+      dueDate: "26/09/2026",
+      returnDate: "25/09/2026",
+      status: "Returned",
+      fine: 0
     }
   ];
 
@@ -298,9 +358,20 @@
     }
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
 
-    if (!localStorage.getItem(STORAGE_KEYS.CIRCULATIONS)) {
-      localStorage.setItem(STORAGE_KEYS.CIRCULATIONS, JSON.stringify(DEFAULT_CIRCULATIONS));
+    // Ensure all circulation history records exist
+    let circs = getRaw(STORAGE_KEYS.CIRCULATIONS, []);
+    if (!circs || circs.length === 0) {
+      circs = DEFAULT_CIRCULATIONS;
+    } else {
+      DEFAULT_CIRCULATIONS.forEach(defCirc => {
+        const exists = circs.some(c => c.id === defCirc.id || (c.studentId === defCirc.studentId && c.isbn === defCirc.isbn && c.status === defCirc.status));
+        if (!exists) {
+          circs.push(defCirc);
+        }
+      });
     }
+    localStorage.setItem(STORAGE_KEYS.CIRCULATIONS, JSON.stringify(circs));
+
     if (!localStorage.getItem(STORAGE_KEYS.MESSAGES)) {
       localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(DEFAULT_MESSAGES));
     }
