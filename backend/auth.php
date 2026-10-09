@@ -1,6 +1,6 @@
 <?php
 /**
- * Smart Library Management System - Authentication Handler
+ * Smart Library Management System - Authentication Handler (SQL PDO)
  * Handles Login, Registration (Signup), Logout, and Session Verification.
  */
 
@@ -38,43 +38,39 @@ function handle_login() {
         json_response(false, 'Please provide both User ID and Password.', null, 400);
     }
 
-    $users = read_json('users.json');
-    $matchedUser = null;
+    $db = get_db();
+    $stmt = $db->prepare("SELECT * FROM users WHERE LOWER(user_id) = LOWER(?) OR LOWER(email) = LOWER(?) LIMIT 1");
+    $stmt->execute([$userId, $userId]);
+    $matchedUser = $stmt->fetch();
 
-    foreach ($users as $u) {
-        if (strcasecmp($u['user_id'], $userId) === 0) {
-            // Check password (supports plain or hashed)
-            if ($u['password'] === $password || password_verify($password, $u['password'])) {
-                $matchedUser = $u;
-                break;
+    if ($matchedUser) {
+        // Verify password (plain text or password_hash)
+        $passwordMatches = ($matchedUser['password'] === $password) || password_verify($password, $matchedUser['password']);
+
+        if ($passwordMatches) {
+            // Set PHP Session
+            $_SESSION['user'] = [
+                'id' => (int)$matchedUser['id'],
+                'user_id' => $matchedUser['user_id'],
+                'name' => $matchedUser['name'],
+                'email' => $matchedUser['email'],
+                'role' => $matchedUser['role']
+            ];
+
+            // Return JSON or redirect
+            if (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
+                json_response(true, 'Login successful!', $_SESSION['user']);
+            } else {
+                $redirectUrl = ($matchedUser['role'] === 'admin') 
+                    ? '../Pages/admin-dashboard.html' 
+                    : '../Pages/student-dashboard.html';
+                header("Location: " . $redirectUrl);
+                exit();
             }
         }
     }
 
-    if ($matchedUser) {
-        // Set PHP Session
-        $_SESSION['user'] = [
-            'id' => $matchedUser['id'],
-            'user_id' => $matchedUser['user_id'],
-            'name' => $matchedUser['name'],
-            'email' => $matchedUser['email'],
-            'role' => $matchedUser['role']
-        ];
-
-        // Return JSON or redirect
-        if (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
-            json_response(true, 'Login successful!', $_SESSION['user']);
-        } else {
-            // HTML Form submit redirect
-            $redirectUrl = ($matchedUser['role'] === 'admin') 
-                ? '../Pages/admin-dashboard.html' 
-                : '../Pages/student-dashboard.html';
-            header("Location: " . $redirectUrl);
-            exit();
-        }
-    } else {
-        json_response(false, 'Invalid User ID or Password. Please try again.', null, 401);
-    }
+    json_response(false, 'Invalid User ID or Password. Please try again.', null, 401);
 }
 
 // 2. Process Registration / Signup
@@ -93,44 +89,41 @@ function handle_signup() {
         json_response(false, 'Passwords do not match.', null, 400);
     }
 
-    $users = read_json('users.json');
+    $db = get_db();
 
     // Check for duplicate Student ID or Email
-    foreach ($users as $u) {
-        if (strcasecmp($u['user_id'], $studentId) === 0) {
+    $checkStmt = $db->prepare("SELECT user_id, email FROM users WHERE LOWER(user_id) = LOWER(?) OR LOWER(email) = LOWER(?) LIMIT 1");
+    $checkStmt->execute([$studentId, $email]);
+    $existing = $checkStmt->fetch();
+
+    if ($existing) {
+        if (strcasecmp($existing['user_id'], $studentId) === 0) {
             json_response(false, "Student ID '{$studentId}' is already registered.", null, 409);
         }
-        if (strcasecmp($u['email'], $email) === 0) {
+        if (strcasecmp($existing['email'], $email) === 0) {
             json_response(false, "Email '{$email}' is already registered.", null, 409);
         }
     }
 
-    // Generate new user entry
-    $newId = count($users) > 0 ? max(array_column($users, 'id')) + 1 : 1;
+    // Insert new user into SQL database
+    $insertStmt = $db->prepare("INSERT INTO users (user_id, name, email, password, role, created_at) VALUES (?, ?, ?, ?, 'student', ?)");
+    $createdDate = date('Y-m-d');
+    $insertStmt->execute([$studentId, $name, $email, $password, $createdDate]);
+    $newId = (int)$db->lastInsertId();
+
     $newUser = [
         'id' => $newId,
         'user_id' => $studentId,
         'name' => $name,
         'email' => $email,
-        'password' => $password, // Can use password_hash($password, PASSWORD_DEFAULT)
-        'role' => 'student',
-        'created_at' => date('Y-m-d')
-    ];
-
-    $users[] = $newUser;
-    write_json('users.json', $users);
-
-    // Auto-login newly registered student
-    $_SESSION['user'] = [
-        'id' => $newUser['id'],
-        'user_id' => $newUser['user_id'],
-        'name' => $newUser['name'],
-        'email' => $newUser['email'],
         'role' => 'student'
     ];
 
+    // Auto-login newly registered student
+    $_SESSION['user'] = $newUser;
+
     if (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
-        json_response(true, 'Account created successfully!', $_SESSION['user']);
+        json_response(true, 'Account created successfully!', $newUser);
     } else {
         header("Location: ../Pages/student-dashboard.html");
         exit();

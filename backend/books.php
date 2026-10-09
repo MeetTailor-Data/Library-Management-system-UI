@@ -1,6 +1,6 @@
 <?php
 /**
- * Smart Library Management System - Books & Catalog Controller
+ * Smart Library Management System - Books & Catalog Controller (SQL PDO)
  * Handles book listing, searching, filtering, adding, editing, and deleting.
  */
 
@@ -35,41 +35,57 @@ switch ($action) {
 
 // 1. List Books (with optional Category and Search filters)
 function list_books() {
-    $books = read_json('books.json');
+    $db = get_db();
     $category = trim($_GET['category'] ?? '');
-    $search = strtolower(trim($_GET['search'] ?? ''));
+    $search = trim($_GET['search'] ?? '');
 
-    $filtered = array_filter($books, function ($b) use ($category, $search) {
-        // Category Filter
-        if (!empty($category) && strcasecmp($category, 'All') !== 0) {
-            if (strcasecmp($b['category'], $category) !== 0) {
-                return false;
-            }
-        }
-        // Search Filter (Title, Author, ISBN)
-        if (!empty($search)) {
-            $matchesTitle = strpos(strtolower($b['title']), $search) !== false;
-            $matchesAuthor = strpos(strtolower($b['author']), $search) !== false;
-            $matchesIsbn = strpos(strtolower($b['isbn']), $search) !== false;
-            if (!$matchesTitle && !$matchesAuthor && !$matchesIsbn) {
-                return false;
-            }
-        }
-        return true;
-    });
+    $sql = "SELECT id, title, author, category, isbn, total_copies, available_copies, image, description FROM books WHERE 1=1";
+    $params = [];
 
-    json_response(true, 'Books retrieved successfully.', array_values($filtered));
+    // Category Filter
+    if (!empty($category) && strcasecmp($category, 'All') !== 0) {
+        $sql .= " AND LOWER(category) = LOWER(?)";
+        $params[] = $category;
+    }
+
+    // Search Filter (Title, Author, ISBN)
+    if (!empty($search)) {
+        $sql .= " AND (LOWER(title) LIKE ? OR LOWER(author) LIKE ? OR LOWER(isbn) LIKE ?)";
+        $searchTerm = '%' . strtolower($search) . '%';
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+    }
+
+    $sql .= " ORDER BY id ASC";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $books = $stmt->fetchAll();
+
+    // Format types for consistency
+    foreach ($books as &$b) {
+        $b['id'] = (int)$b['id'];
+        $b['total_copies'] = (int)$b['total_copies'];
+        $b['available_copies'] = (int)$b['available_copies'];
+    }
+
+    json_response(true, 'Books retrieved successfully.', $books);
 }
 
 // 2. Get Single Book Details
 function get_single_book() {
     $id = (int)($_GET['id'] ?? 0);
-    $books = read_json('books.json');
+    $db = get_db();
 
-    foreach ($books as $b) {
-        if ($b['id'] === $id) {
-            json_response(true, 'Book details found.', $b);
-        }
+    $stmt = $db->prepare("SELECT * FROM books WHERE id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $book = $stmt->fetch();
+
+    if ($book) {
+        $book['id'] = (int)$book['id'];
+        $book['total_copies'] = (int)$book['total_copies'];
+        $book['available_copies'] = (int)$book['available_copies'];
+        json_response(true, 'Book details found.', $book);
     }
 
     json_response(false, 'Book not found.', null, 404);
@@ -79,33 +95,40 @@ function get_single_book() {
 function add_book() {
     $title = trim($_POST['title'] ?? '');
     $author = trim($_POST['author'] ?? '');
-    $category = trim($_POST['category'] ?? '');
+    $category = trim($_POST['category'] ?? 'General');
     $isbn = trim($_POST['isbn'] ?? '');
     $copies = (int)($_POST['copies'] ?? 1);
-    $description = trim($_POST['description'] ?? '');
+    $description = trim($_POST['description'] ?? 'No description provided.');
     $image = trim($_POST['image'] ?? 'b1.jpg');
 
     if (empty($title) || empty($author) || empty($isbn)) {
         json_response(false, 'Title, Author, and ISBN are required.', null, 400);
     }
 
-    $books = read_json('books.json');
-    $newId = count($books) > 0 ? max(array_column($books, 'id')) + 1 : 1;
+    $db = get_db();
+
+    // Check ISBN uniqueness
+    $checkStmt = $db->prepare("SELECT id FROM books WHERE isbn = ? LIMIT 1");
+    $checkStmt->execute([$isbn]);
+    if ($checkStmt->fetch()) {
+        json_response(false, "A book with ISBN '{$isbn}' already exists.", null, 409);
+    }
+
+    $stmt = $db->prepare("INSERT INTO books (title, author, category, isbn, total_copies, available_copies, image, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$title, $author, $category, $isbn, $copies, $copies, $image, $description]);
+    $newId = (int)$db->lastInsertId();
 
     $newBook = [
         'id' => $newId,
         'title' => $title,
         'author' => $author,
-        'category' => $category ?: 'General',
+        'category' => $category,
         'isbn' => $isbn,
         'total_copies' => $copies,
         'available_copies' => $copies,
         'image' => $image,
-        'description' => $description ?: 'No description provided.'
+        'description' => $description
     ];
-
-    $books[] = $newBook;
-    write_json('books.json', $books);
 
     json_response(true, "Book '{$title}' added successfully to inventory.", $newBook);
 }
@@ -119,43 +142,44 @@ function edit_book() {
     $isbn = trim($_POST['isbn'] ?? '');
     $totalCopies = isset($_POST['total_copies']) ? (int)$_POST['total_copies'] : null;
 
-    $books = read_json('books.json');
-    $updated = false;
+    $db = get_db();
+    $stmt = $db->prepare("SELECT * FROM books WHERE id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $book = $stmt->fetch();
 
-    foreach ($books as &$b) {
-        if ($b['id'] === $id) {
-            if (!empty($title)) $b['title'] = $title;
-            if (!empty($author)) $b['author'] = $author;
-            if (!empty($category)) $b['category'] = $category;
-            if (!empty($isbn)) $b['isbn'] = $isbn;
-            if ($totalCopies !== null) {
-                $difference = $totalCopies - $b['total_copies'];
-                $b['total_copies'] = $totalCopies;
-                $b['available_copies'] = max(0, $b['available_copies'] + $difference);
-            }
-            $updated = true;
-            break;
-        }
-    }
-
-    if ($updated) {
-        write_json('books.json', $books);
-        json_response(true, 'Book updated successfully.');
-    } else {
+    if (!$book) {
         json_response(false, 'Book not found for update.', null, 404);
     }
+
+    $newTitle = !empty($title) ? $title : $book['title'];
+    $newAuthor = !empty($author) ? $author : $book['author'];
+    $newCategory = !empty($category) ? $category : $book['category'];
+    $newIsbn = !empty($isbn) ? $isbn : $book['isbn'];
+
+    $newTotal = $book['total_copies'];
+    $newAvailable = $book['available_copies'];
+
+    if ($totalCopies !== null && $totalCopies >= 0) {
+        $diff = $totalCopies - (int)$book['total_copies'];
+        $newTotal = $totalCopies;
+        $newAvailable = max(0, (int)$book['available_copies'] + $diff);
+    }
+
+    $updateStmt = $db->prepare("UPDATE books SET title = ?, author = ?, category = ?, isbn = ?, total_copies = ?, available_copies = ? WHERE id = ?");
+    $updateStmt->execute([$newTitle, $newAuthor, $newCategory, $newIsbn, $newTotal, $newAvailable, $id]);
+
+    json_response(true, 'Book updated successfully.');
 }
 
 // 5. Delete Book (Admin Only)
 function delete_book() {
     $id = (int)($_POST['id'] ?? 0);
-    $books = read_json('books.json');
-    $initialCount = count($books);
+    $db = get_db();
 
-    $books = array_filter($books, fn($b) => $b['id'] !== $id);
+    $stmt = $db->prepare("DELETE FROM books WHERE id = ?");
+    $stmt->execute([$id]);
 
-    if (count($books) < $initialCount) {
-        write_json('books.json', array_values($books));
+    if ($stmt->rowCount() > 0) {
         json_response(true, 'Book removed from library catalog.');
     } else {
         json_response(false, 'Book not found to delete.', null, 404);

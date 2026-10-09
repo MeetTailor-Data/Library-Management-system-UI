@@ -1,8 +1,8 @@
 {
   "name": "library",
   "version": "1.0.0",
-  "description": "A modern, responsive, and lightweight **Smart Library Management System** built with **HTML5, CSS3, JavaScript, and PHP 8.x** utilizing a **JSON-based Flat-File Data Management Engine** (Zero external database dependency).",
-  "main": "index.js",
+  "description": "A modern, responsive, and robust Smart Library Management System built with HTML5, CSS3, JavaScript, PHP 8.x, and Relational SQL Database (PDO MySQL / SQLite).",
+  "main": "index.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

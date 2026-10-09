@@ -1,6 +1,6 @@
 # Smart Library Management System (SLMS)
 
-A modern, responsive, and lightweight **Smart Library Management System** built with **HTML5, CSS3, JavaScript, and PHP 8.x** utilizing a **JSON-based Flat-File Data Management Engine** (Zero external database dependency).
+A modern, responsive, and robust **Smart Library Management System** built with **HTML5, CSS3, JavaScript (ES6+), and PHP 8.x** backed by a relational **SQL Database (MySQL / PDO / SQLite)** with ACID transactions, inventory management, and fine automation.
 
 ---
 
@@ -10,16 +10,16 @@ The **Smart Library Management System (SLMS)** automates book cataloging, member
 
 ---
 
-## 🧠 Why is it "Smart"? (Key Highlights)
+## 🧠 Key Features
 
 1. **⏱️ Automated Due Date & Fine Calculation Engine:**  
    Automatically assigns a **14-day return due date** on every book issue. Computes late penalty fines dynamically (**₹5 per day overdue**) if returned after the due date.
 2. **📦 Real-time Dynamic Stock Control:**  
-   Automatically decrements available book copies on issue and increments them upon return. Prevents checkouts when stock reaches zero.
+   Atomically decrements available book copies on issue and increments them upon return using SQL transactions. Prevents checkouts when stock reaches zero.
 3. **🛡️ Smart Borrow Limits & Prevention:**  
    Enforces a **maximum borrow limit of 3 books** per student and prevents duplicate checkout of the same title.
 4. **👥 Role-Based Access Control (RBAC):**  
-   Intelligent single-portal authentication that auto-routes **Admins** to the management dashboard and **Students** to their personal portal.
+   Single-portal authentication that auto-routes **Admins** to the management dashboard and **Students** to their personal portal.
 5. **🔍 Instant Live Catalog Search & Category Filter (OPAC):**  
    Search books in real time by title, author, or ISBN, with one-click category filtering and availability status badges.
 
@@ -28,9 +28,9 @@ The **Smart Library Management System (SLMS)** automates book cataloging, member
 ## 🛠️ Technology Stack
 
 * **Frontend:** HTML5, Vanilla CSS3 (Custom Design System), JavaScript (ES6+)
-* **Backend:** PHP 8.x
-* **Data Storage / Engine:** JSON-based Flat-File Database (`data/*.json`)
-* **Responsive Framework:** Mobile-first architecture with animated 3-line hamburger navigation
+* **Backend:** PHP 8.x (RESTful API controllers)
+* **Database & Engine:** **Relational SQL Database** (MySQL / MariaDB via PDO with SQLite auto-fallback)
+* **Database Schema:** [`database.sql`](file:///c:/Users/meett/OneDrive/Desktop/Meet/All-projects/library/database.sql) (Tables: `users`, `books`, `issued_books`, `messages`)
 
 ---
 
@@ -39,6 +39,7 @@ The **Smart Library Management System (SLMS)** automates book cataloging, member
 ```
 Library-Management-System/
 ├── index.php                   # Root Entry Point & Auto-router
+├── database.sql                # Complete SQL Database Schema & Seed Data
 ├── vercel.json                 # Vercel Deployment & Route Configuration
 ├── README.md                   # Project Documentation
 │
@@ -54,18 +55,13 @@ Library-Management-System/
 │   ├── blog.html               # Library Blog Feed
 │   └── blog-post1.html         # Blog Article View
 │
-├── backend/                    # Pure PHP 8.x Backend Engine & Controllers
-│   ├── db.php                  # Core JSON Helper & Automated Fine Calculator
+├── backend/                    # PHP 8.x Backend Engine & SQL Controllers
+│   ├── config.php              # Database Credentials & Driver Configuration
+│   ├── db.php                  # PDO Database Connection, Auto-Init & Fine Calculator
 │   ├── auth.php                # Authentication, Registration & Session Controller
 │   ├── books.php               # Book Inventory CRUD & Catalog Controller
-│   ├── circulation.php         # Issue/Return Engine, Limits & Stock Sync
+│   ├── circulation.php         # Issue/Return Engine, Limits & Stock Sync (Transactions)
 │   └── contact.php             # Contact Inquiries Handler
-│
-├── data/                       # JSON Flat-File Data Store
-│   ├── users.json              # Student & Admin Credentials
-│   ├── books.json              # Catalog Inventory & Live Stock Counts
-│   ├── issued_books.json       # Circulation Records & Due Dates
-│   └── messages.json           # Inquiries & Contact Messages
 │
 └── assets/
     ├── css/
@@ -79,9 +75,17 @@ Library-Management-System/
 
 ---
 
-## 🌐 Live Deployment
+## 🗄️ Database Setup
 
-* **Production URL:** [https://smartlib-mgmt.vercel.app/](https://smartlib-mgmt.vercel.app/)
+### Option A: Using MySQL / MariaDB (phpMyAdmin / XAMPP / CLI)
+1. Open MySQL / phpMyAdmin and create/import:
+   ```bash
+   mysql -u root -p < database.sql
+   ```
+2. Configure credentials in [`backend/config.php`](file:///c:/Users/meett/OneDrive/Desktop/Meet/All-projects/library/backend/config.php) (or use environment variables `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`).
+
+### Option B: Zero Configuration / SQLite
+* If MySQL is not running locally, the system automatically initializes a local SQLite database (`backend/library.sqlite`) with full table structures and seed records out of the box!
 
 ---
 
@@ -89,17 +93,16 @@ Library-Management-System/
 
 | Role | User / Student ID | Password | Access / Permissions |
 |---|---|---|---|
-| **Librarian (Admin)** | `ADMIN01` *(or `admin`)* | `admin` | Full Inventory CRUD, Issue & Return, Student List, Inquiries |
-| **Student (Meet Tailor)** | `STU105` | `meet2006` | Borrow Books, Active Due Date Tracking, History |
+| **Librarian (Admin)** | `ADMIN01` *(or `admin`)* | `admin123` *(or `admin`)* | Full Inventory CRUD, Issue & Return, Student List, Inquiries |
 | **Student 1 (John Doe)** | `STU101` | `student123` | Borrow Books, Active Due Date Tracking, History |
 | **Student 2 (Emily Clark)** | `STU102` | `student123` | Overdue Fine Tracking & History |
+| **Student 3 (David Miller)** | `STU103` | `student123` | Borrow Books, Active Due Date Tracking, History |
 | **New Student** | *Custom Student ID* | *Custom Pass* | Register via the **Signup** tab on `login.html` |
 
 ---
 
 ## 🚀 How to Run Locally
 
-### Using PHP Built-in Server (Recommended - No XAMPP needed)
 1. Open your terminal in the project root directory:
    ```bash
    php -S localhost:8000
@@ -111,23 +114,7 @@ Library-Management-System/
 
 ---
 
-## ☁️ Deploying on Vercel
-
-1. Push your repository to **GitHub**.
-2. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
-3. Import your `Library-Management-system-UI` repository.
-4. Keep the default settings and click **Deploy**.
-5. The included `vercel.json` automatically routes root traffic to `Pages/index.html`.
-
----
-
 ## 👤 Author
 
 **Meet Tailor**  
 *GitHub:* [@MeetTailor-Data](https://github.com/MeetTailor-Data)
-
----
-
-## 📄 License
-
-This project is open-source and created for academic, educational, and development demonstration purposes.

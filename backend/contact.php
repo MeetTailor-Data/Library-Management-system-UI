@@ -1,7 +1,7 @@
 <?php
 /**
- * Smart Library Management System - Contact Form Controller
- * Saves incoming contact queries into data/messages.json.
+ * Smart Library Management System - Contact Form Controller (SQL PDO)
+ * Saves incoming contact queries into SQL messages table.
  */
 
 require_once __DIR__ . '/db.php';
@@ -18,8 +18,11 @@ if ($action === 'submit') {
         json_response(false, 'Please fill in all required fields.', null, 400);
     }
 
-    $messages = read_json('messages.json');
-    $newId = count($messages) > 0 ? max(array_column($messages, 'id')) + 1 : 1;
+    $db = get_db();
+    $stmt = $db->prepare("INSERT INTO messages (name, email, subject, message, status, created_at) VALUES (?, ?, ?, ?, 'Unread', ?)");
+    $createdDate = date('Y-m-d');
+    $stmt->execute([$name, $email, $subject, $message, $createdDate]);
+    $newId = (int)$db->lastInsertId();
 
     $newMessage = [
         'id' => $newId,
@@ -27,16 +30,20 @@ if ($action === 'submit') {
         'email' => $email,
         'subject' => $subject,
         'message' => $message,
-        'created_at' => date('Y-m-d'),
+        'created_at' => $createdDate,
         'status' => 'Unread'
     ];
 
-    $messages[] = $newMessage;
-    write_json('messages.json', $messages);
-
     json_response(true, 'Your message has been sent successfully. The library team will respond soon.', $newMessage);
 } elseif ($action === 'list') {
-    $messages = read_json('messages.json');
+    $db = get_db();
+    $stmt = $db->query("SELECT * FROM messages ORDER BY id DESC");
+    $messages = $stmt->fetchAll();
+    
+    foreach ($messages as &$m) {
+        $m['id'] = (int)$m['id'];
+    }
+
     json_response(true, 'Contact messages loaded.', $messages);
 } else {
     json_response(false, 'Invalid action specified.', null, 400);
